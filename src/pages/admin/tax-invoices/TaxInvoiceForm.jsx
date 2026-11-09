@@ -5,6 +5,8 @@ import { companiesService } from '../../../services/companies';
 import { productsService } from '../../../services/products';
 import { CURRENCIES, TAX_TYPES } from '../../../config/catalog';
 import InvoiceTotals from './InvoiceTotals';
+import DateInput from '../../../components/DateInput';
+import SearchSelect from '../../../components/SearchSelect';
 import {
   computeTotals,
   emptyInvoice,
@@ -87,6 +89,13 @@ export default function TaxInvoiceForm() {
 
   const totals = computeTotals(form.items, form.taxType);
   const companyFound = companies.some((c) => c.id === form.poCompanyId);
+  const companyOptions = companies.map((c) => ({ value: c.id, label: c.name }));
+  // Product code and HSN are searchable too
+  const productOptions = products.map((p) => ({
+    value: p.id,
+    label: p.name,
+    searchText: [p.code, p.name, p.hsnCode].filter(Boolean).join(' '),
+  }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -129,7 +138,7 @@ export default function TaxInvoiceForm() {
       <div className="form-row">
         <label className="field">
           <span>Invoice Date</span>
-          <input type="date" className="input" value={form.invoiceDate} onChange={setField('invoiceDate')} required />
+          <DateInput value={form.invoiceDate} onChange={(v) => setForm((f) => ({ ...f, invoiceDate: v }))} required />
         </label>
         <label className="field">
           <span>Invoice Number</span>
@@ -137,7 +146,7 @@ export default function TaxInvoiceForm() {
         </label>
         <label className="field">
           <span>PO Date</span>
-          <input type="date" className="input" value={form.poDate} onChange={setField('poDate')} />
+          <DateInput value={form.poDate} onChange={(v) => setForm((f) => ({ ...f, poDate: v }))} />
         </label>
         <label className="field">
           <span>PO Number</span>
@@ -148,17 +157,14 @@ export default function TaxInvoiceForm() {
       <div className="form-row">
         <label className="field field-wide">
           <span>PO Company</span>
-          <select
-            className="input"
+          <SearchSelect
+            aria-label="PO Company"
+            options={companyOptions}
             value={companyFound ? form.poCompanyId : ''}
-            onChange={(e) => selectCompany(e.target.value)}
+            onChange={selectCompany}
+            placeholder={form.poCompany && !companyFound ? `${form.poCompany} (not in company list — select again)` : 'Search or select company…'}
             required
-          >
-            <option value="">
-              {form.poCompany && !companyFound ? `${form.poCompany} (not in company list — select again)` : 'Select company…'}
-            </option>
-            {companies.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
+          />
         </label>
         <label className="field">
           <span>Currency</span>
@@ -180,15 +186,14 @@ export default function TaxInvoiceForm() {
           const productFound = products.some((p) => p.id === item.productId);
           return (
             <div className="items-row" key={i}>
-              <select
-                className="input"
+              <SearchSelect
                 aria-label="Item"
+                options={productOptions}
                 value={productFound ? item.productId : ''}
-                onChange={(e) => selectProduct(i, e.target.value)}
-              >
-                <option value="">{item.description && !productFound ? item.description : 'Select product…'}</option>
-                {products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-              </select>
+                onChange={(v) => selectProduct(i, v)}
+                placeholder={item.description && !productFound ? item.description : 'Search or select product…'}
+                filterOption={(opt, input) => opt.data.searchText.toLowerCase().includes(input.toLowerCase())}
+              />
               <input className="input" aria-label="HSN Code" value={item.hsnCode || ''} onChange={(e) => setItem(i, { hsnCode: e.target.value })} />
               <input
                 type="number" min="0" step="any" className="input num" aria-label="Quantity"

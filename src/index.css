@@ -147,3 +147,9 @@ textarea.input { resize: vertical; }
   .admin-content { padding: 0; max-width: none; }
   .card { box-shadow: none; padding: 0; }
 }
+
+/* Date picker */
+.date-input { width: 100%; }
+.date-input .react-datepicker__input-container { display: block; }
+.react-datepicker-popper { z-index: 50; }
+.react-datepicker { font-family: inherit; }
