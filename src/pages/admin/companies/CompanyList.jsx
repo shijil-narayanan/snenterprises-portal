@@ -1,8 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { companiesService } from '../../../services/companies';
-import { DEFAULT_COMPANIES } from '../../../data/seed';
-import ImportDefaults from '../../../components/ImportDefaults';
 
 export default function CompanyList() {
   const [companies, setCompanies] = useState([]);
@@ -10,17 +8,13 @@ export default function CompanyList() {
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
 
-  const load = useCallback(() => {
-    return companiesService
+  useEffect(() => {
+    companiesService
       .list()
       .then(setCompanies)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -50,7 +44,7 @@ export default function CompanyList() {
       {loading ? (
         <p className="muted">Loading…</p>
       ) : companies.length === 0 ? (
-        <ImportDefaults label="companies" items={DEFAULT_COMPANIES} service={companiesService} onDone={load} />
+        <p className="muted">No companies yet. <Link to="/admin/companies/new">Add the first one</Link>.</p>
       ) : (
         <>
           <input className="input search" placeholder="Search by name, GST, email, city…" value={search} onChange={(e) => setSearch(e.target.value)} />

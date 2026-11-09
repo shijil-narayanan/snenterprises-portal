@@ -8,7 +8,6 @@ import {
   orderBy,
   query,
   updateDoc,
-  writeBatch,
 } from 'firebase/firestore';
 import { db, isFirebaseConfigured } from '../firebase';
 
@@ -69,22 +68,6 @@ export function createCollectionService(name, { toRecord = (d) => d, orderField 
         return created.id;
       }
       return (await addDoc(collection(db, name), record)).id;
-    },
-
-    /** Create many records in one go (used for importing default data). */
-    async createMany(items) {
-      const records = items.map(stamp);
-      if (!isFirebaseConfigured) {
-        local.write([...local.read(), ...records.map((r) => ({ id: crypto.randomUUID(), ...r }))]);
-        return records.length;
-      }
-      // Firestore batches are limited to 500 writes
-      for (let i = 0; i < records.length; i += 500) {
-        const batch = writeBatch(db);
-        records.slice(i, i + 500).forEach((r) => batch.set(doc(collection(db, name)), r));
-        await batch.commit();
-      }
-      return records.length;
     },
 
     async update(id, data) {

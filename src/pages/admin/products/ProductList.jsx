@@ -1,8 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { productsService } from '../../../services/products';
-import { DEFAULT_PRODUCTS } from '../../../data/seed';
-import ImportDefaults from '../../../components/ImportDefaults';
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
@@ -10,17 +8,13 @@ export default function ProductList() {
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
 
-  const load = useCallback(() => {
-    return productsService
+  useEffect(() => {
+    productsService
       .list()
       .then(setProducts)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -48,7 +42,7 @@ export default function ProductList() {
       {loading ? (
         <p className="muted">Loading…</p>
       ) : products.length === 0 ? (
-        <ImportDefaults label="products" items={DEFAULT_PRODUCTS} service={productsService} onDone={load} />
+        <p className="muted">No products yet. <Link to="/admin/products/new">Add the first one</Link>.</p>
       ) : (
         <>
           <input className="input search" placeholder="Search by code, name or HSN…" value={search} onChange={(e) => setSearch(e.target.value)} />

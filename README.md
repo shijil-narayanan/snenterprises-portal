@@ -13,8 +13,8 @@ Company website and internal portal for **SN Enterprises**, built with React (Vi
 | `/admin/tax-invoices/:id` | View / print a tax invoice |
 | `/admin/tax-invoices/:id/edit` | Edit a tax invoice |
 | `/admin/commercial-invoices` | Placeholder (coming soon) |
-| `/admin/companies` | Companies (buyers) — list, add, edit, delete, import defaults |
-| `/admin/products` | Products — list, add, edit, delete, import defaults |
+| `/admin/companies` | Companies (buyers) — list, search, add, edit, delete |
+| `/admin/products` | Products — list, search, add, edit, delete |
 
 > `/admin` is **not secured yet**. Add Firebase Authentication and a route guard before going live.
 
@@ -40,8 +40,7 @@ Data is stored in the `taxInvoices`, `companies` and `products` collections. Dev
 
 ## Companies & products
 
-The Companies and Products pages show an **Import default …** button while empty, which loads the
-starting lists from `src/data/seed.js`. The tax invoice form picks the PO company and items from
+Companies and products are managed from their own tabs in the portal. The tax invoice form picks the PO company and items from
 these collections; the item's HSN code is filled in automatically. Each invoice stores a copy of the
 buyer's details, so editing or deleting a company later doesn't change existing invoices.
 
