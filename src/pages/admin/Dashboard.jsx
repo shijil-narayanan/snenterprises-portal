@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { listTaxInvoices } from '../../services/taxInvoices';
+import { companiesService } from '../../services/companies';
+import { productsService } from '../../services/products';
 import { formatDate, formatMoney } from '../../utils/invoice';
 
 export default function Dashboard() {
   const [invoices, setInvoices] = useState(null);
+  const [counts, setCounts] = useState({});
   const [error, setError] = useState('');
 
   useEffect(() => {
     listTaxInvoices().then(setInvoices).catch((e) => setError(e.message));
+    companiesService.list().then((l) => setCounts((c) => ({ ...c, companies: l.length }))).catch(() => {});
+    productsService.list().then((l) => setCounts((c) => ({ ...c, products: l.length }))).catch(() => {});
   }, []);
 
   const recent = (invoices || []).slice(0, 5);
@@ -32,6 +37,16 @@ export default function Dashboard() {
           <div className="stat-label">Commercial Invoices</div>
           <div className="stat-value muted">—</div>
           <span className="muted">Coming soon</span>
+        </div>
+        <div className="card stat">
+          <div className="stat-label">Companies</div>
+          <div className="stat-value">{counts.companies ?? '…'}</div>
+          <Link to="/admin/companies">Manage →</Link>
+        </div>
+        <div className="card stat">
+          <div className="stat-label">Products</div>
+          <div className="stat-value">{counts.products ?? '…'}</div>
+          <Link to="/admin/products">Manage →</Link>
         </div>
       </div>
 

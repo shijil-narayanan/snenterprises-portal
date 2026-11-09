@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import {
-  createTaxInvoice,
-  getTaxInvoice,
-  listTaxInvoices,
-  updateTaxInvoice,
-} from '../../../services/taxInvoices';
-import { COMPANY_SUGGESTIONS, CURRENCIES, ITEM_SUGGESTIONS, TAX_TYPES } from '../../../config/catalog';
+import { createTaxInvoice, getTaxInvoice, listTaxInvoices, updateTaxInvoice } from '../../../services/taxInvoices';
+import { companiesService } from '../../../services/companies';
+import { productsService } from '../../../services/products';
+import { CURRENCIES, TAX_TYPES } from '../../../config/catalog';
 import InvoiceTotals from './InvoiceTotals';
 import {
   computeTotals,
@@ -17,13 +14,17 @@ import {
   suggestInvoiceNumber,
 } from '../../../utils/invoice';
 
+// Buyer details copied onto the invoice (without bookkeeping fields)
+const buyerSnapshot = ({ id: _id, createdAt: _c, updatedAt: _u, ...rest }) => rest;
+
 export default function TaxInvoiceForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
 
   const [form, setForm] = useState(emptyInvoice);
-  const [companies, setCompanies] = useState(COMPANY_SUGGESTIONS);
+  const [companies, setCompanies] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -32,14 +33,20 @@ export default function TaxInvoiceForm() {
     let cancelled = false;
     (async () => {
       try {
-        const all = await listTaxInvoices();
+        const [all, companyList, productList] = await Promise.all([
+          listTaxInvoices(),
+          companiesService.list(),
+          productsService.list(),
+        ]);
         if (cancelled) return;
-        // Offer previously used companies as suggestions
-        setCompanies([...new Set([...COMPANY_SUGGESTIONS, ...all.map((i) => i.poCompany).filter(Boolean)])]);
+        setCompanies(companyList);
+        setProducts(productList);
         if (isEdit) {
           const inv = all.find((i) => i.id === id) || (await getTaxInvoice(id));
           if (!inv) throw new Error('Invoice not found');
-          setForm({ ...emptyInvoice(), ...inv, items: inv.items?.length ? inv.items : [emptyItem()] });
+          // Older invoices stored only the company name: link it to the company if the name matches
+          const poCompanyId = inv.poCompanyId || companyList.find((c) => c.name === inv.poCompany)?.id || '';
+          setForm({ ...emptyInvoice(), ...inv, poCompanyId, items: inv.items?.length ? inv.items : [emptyItem()] });
         } else {
           setForm((f) => ({ ...f, invoiceNumber: suggestInvoiceNumber(all) }));
         }
@@ -56,28 +63,44 @@ export default function TaxInvoiceForm() {
 
   const setField = (name) => (e) => setForm((f) => ({ ...f, [name]: e.target.value }));
 
-  const setItem = (index, name, value) =>
+  const selectCompany = (companyId) => {
+    const company = companies.find((c) => c.id === companyId);
     setForm((f) => ({
       ...f,
-      items: f.items.map((it, i) => (i === index ? { ...it, [name]: value } : it)),
+      poCompanyId: companyId,
+      poCompany: company?.name || '',
+      buyer: company ? buyerSnapshot(company) : null,
     }));
+  };
+
+  const setItem = (index, changes) =>
+    setForm((f) => ({ ...f, items: f.items.map((it, i) => (i === index ? { ...it, ...changes } : it)) }));
+
+  const selectProduct = (index, productId) => {
+    const p = products.find((x) => x.id === productId);
+    setItem(index, { productId, description: p?.name || '', hsnCode: p?.hsnCode || '' });
+  };
 
   const addItem = () => setForm((f) => ({ ...f, items: [...f.items, emptyItem()] }));
   const removeItem = (index) =>
     setForm((f) => ({ ...f, items: f.items.length > 1 ? f.items.filter((_, i) => i !== index) : [emptyItem()] }));
 
   const totals = computeTotals(form.items, form.taxType);
+  const companyFound = companies.some((c) => c.id === form.poCompanyId);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (!form.items.some((it) => it.description.trim())) {
-      setError('Add at least one item with a description.');
+    const items = form.items.filter((it) => it.description.trim());
+    if (!items.length) {
+      setError('Add at least one item.');
       return;
     }
     setSaving(true);
     try {
-      const data = { ...form, items: form.items.filter((it) => it.description.trim()) };
+      // Refresh the buyer snapshot from the current company record
+      const company = companies.find((c) => c.id === form.poCompanyId);
+      const data = { ...form, items, buyer: company ? buyerSnapshot(company) : form.buyer };
       const savedId = isEdit ? (await updateTaxInvoice(id, data), id) : await createTaxInvoice(data);
       navigate(`/admin/tax-invoices/${savedId}`);
     } catch (err) {
@@ -96,6 +119,12 @@ export default function TaxInvoiceForm() {
       </div>
 
       {error && <div className="alert alert-error">{error}</div>}
+      {(companies.length === 0 || products.length === 0) && (
+        <div className="alert alert-info">
+          {companies.length === 0 && <>No companies yet — <Link to="/admin/companies">add or import companies</Link>. </>}
+          {products.length === 0 && <>No products yet — <Link to="/admin/products">add or import products</Link>.</>}
+        </div>
+      )}
 
       <div className="form-row">
         <label className="field">
@@ -119,16 +148,17 @@ export default function TaxInvoiceForm() {
       <div className="form-row">
         <label className="field field-wide">
           <span>PO Company</span>
-          <input
+          <select
             className="input"
-            list="po-companies"
-            value={form.poCompany}
-            onChange={setField('poCompany')}
-            placeholder="Select or type a company"
-          />
-          <datalist id="po-companies">
-            {companies.map((c) => <option key={c} value={c} />)}
-          </datalist>
+            value={companyFound ? form.poCompanyId : ''}
+            onChange={(e) => selectCompany(e.target.value)}
+            required
+          >
+            <option value="">
+              {form.poCompany && !companyFound ? `${form.poCompany} (not in company list — select again)` : 'Select company…'}
+            </option>
+            {companies.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
         </label>
         <label className="field">
           <span>Currency</span>
@@ -144,35 +174,37 @@ export default function TaxInvoiceForm() {
 
       <div className="items">
         <div className="items-head">
-          <span>Item</span><span>Qty</span><span>Rate</span><span>Amount</span><span />
+          <span>Item</span><span>HSN</span><span>Qty</span><span>Rate</span><span>Amount</span><span />
         </div>
-        <datalist id="item-suggestions">
-          {ITEM_SUGGESTIONS.map((s) => <option key={s} value={s} />)}
-        </datalist>
-        {form.items.map((item, i) => (
-          <div className="items-row" key={i}>
-            <input
-              className="input"
-              list="item-suggestions"
-              placeholder="Item description"
-              aria-label="Item"
-              value={item.description}
-              onChange={(e) => setItem(i, 'description', e.target.value)}
-            />
-            <input
-              type="number" min="0" step="any" className="input num" aria-label="Quantity"
-              value={item.qty}
-              onChange={(e) => setItem(i, 'qty', e.target.value)}
-            />
-            <input
-              type="number" min="0" step="0.01" className="input num" aria-label="Rate"
-              value={item.rate}
-              onChange={(e) => setItem(i, 'rate', e.target.value)}
-            />
-            <input className="input num" aria-label="Amount" value={formatMoney(lineAmount(item), form.currency)} readOnly tabIndex={-1} />
-            <button type="button" className="btn btn-danger btn-icon" title="Remove item" onClick={() => removeItem(i)}>🗑</button>
-          </div>
-        ))}
+        {form.items.map((item, i) => {
+          const productFound = products.some((p) => p.id === item.productId);
+          return (
+            <div className="items-row" key={i}>
+              <select
+                className="input"
+                aria-label="Item"
+                value={productFound ? item.productId : ''}
+                onChange={(e) => selectProduct(i, e.target.value)}
+              >
+                <option value="">{item.description && !productFound ? item.description : 'Select product…'}</option>
+                {products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+              </select>
+              <input className="input" aria-label="HSN Code" value={item.hsnCode || ''} onChange={(e) => setItem(i, { hsnCode: e.target.value })} />
+              <input
+                type="number" min="0" step="any" className="input num" aria-label="Quantity"
+                value={item.qty}
+                onChange={(e) => setItem(i, { qty: e.target.value })}
+              />
+              <input
+                type="number" min="0" step="0.01" className="input num" aria-label="Rate"
+                value={item.rate}
+                onChange={(e) => setItem(i, { rate: e.target.value })}
+              />
+              <input className="input num" aria-label="Amount" value={formatMoney(lineAmount(item), form.currency)} readOnly tabIndex={-1} />
+              <button type="button" className="btn btn-danger btn-icon" title="Remove item" onClick={() => removeItem(i)}>🗑</button>
+            </div>
+          );
+        })}
         <button type="button" className="btn btn-primary" onClick={addItem}>Add Item</button>
       </div>
 

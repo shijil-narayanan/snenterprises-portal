@@ -10,6 +10,10 @@ import ComingSoon from './pages/admin/ComingSoon';
 import TaxInvoiceList from './pages/admin/tax-invoices/TaxInvoiceList';
 import TaxInvoiceForm from './pages/admin/tax-invoices/TaxInvoiceForm';
 import TaxInvoiceView from './pages/admin/tax-invoices/TaxInvoiceView';
+import CompanyList from './pages/admin/companies/CompanyList';
+import CompanyForm from './pages/admin/companies/CompanyForm';
+import ProductList from './pages/admin/products/ProductList';
+import ProductForm from './pages/admin/products/ProductForm';
 
 export default function App() {
   return (
@@ -29,6 +33,12 @@ export default function App() {
         <Route path="tax-invoices/:id" element={<TaxInvoiceView />} />
         <Route path="tax-invoices/:id/edit" element={<TaxInvoiceForm />} />
         <Route path="commercial-invoices" element={<ComingSoon title="Commercial Invoices" />} />
+        <Route path="companies" element={<CompanyList />} />
+        <Route path="companies/new" element={<CompanyForm />} />
+        <Route path="companies/:id/edit" element={<CompanyForm />} />
+        <Route path="products" element={<ProductList />} />
+        <Route path="products/new" element={<ProductForm />} />
+        <Route path="products/:id/edit" element={<ProductForm />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

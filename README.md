@@ -13,6 +13,8 @@ Company website and internal portal for **SN Enterprises**, built with React (Vi
 | `/admin/tax-invoices/:id` | View / print a tax invoice |
 | `/admin/tax-invoices/:id/edit` | Edit a tax invoice |
 | `/admin/commercial-invoices` | Placeholder (coming soon) |
+| `/admin/companies` | Companies (buyers) — list, add, edit, delete, import defaults |
+| `/admin/products` | Products — list, add, edit, delete, import defaults |
 
 > `/admin` is **not secured yet**. Add Firebase Authentication and a route guard before going live.
 
@@ -33,13 +35,22 @@ Without Firebase keys the app runs in **demo mode** and saves data in the browse
 4. `cp .env.example .env.local` and paste the values.
 5. Restart `npm run dev`. The yellow "Demo mode" banner disappears once Firestore is in use.
 
-Invoices are stored in the `taxInvoices` collection. Development rules are in `firestore.rules`
+Data is stored in the `taxInvoices`, `companies` and `products` collections. Development rules are in `firestore.rules`
 (open access — lock them down before going live).
+
+## Companies & products
+
+The Companies and Products pages show an **Import default …** button while empty, which loads the
+starting lists from `src/data/seed.js`. The tax invoice form picks the PO company and items from
+these collections; the item's HSN code is filled in automatically. Each invoice stores a copy of the
+buyer's details, so editing or deleting a company later doesn't change existing invoices.
+
+SN Enterprises' own details (address, GSTIN, IEC, bank, LUT) are in `src/config/company.js`.
 
 ## Tax invoice fields
 
 Invoice date, invoice number (auto-suggested as `SNE/<FY>/<nnn>`), PO date, PO number, PO company,
-currency, payment terms, line items (item, qty, rate, amount) and tax
+currency, payment terms, line items (item, HSN, qty, rate, amount) and tax
 (CGST 9% + SGST 9%, or IGST 18%). Sub total, taxes and grand total are calculated automatically.
 
 ## Deploying (later)

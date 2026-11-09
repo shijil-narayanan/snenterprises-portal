@@ -5,6 +5,9 @@ const tabs = [
   { to: '/admin', label: 'Dashboard', icon: '🏠', end: true },
   { to: '/admin/tax-invoices', label: 'Tax Invoices', icon: '🧾' },
   { to: '/admin/commercial-invoices', label: 'Commercial Invoices', icon: '📄' },
+  { section: 'Master Data' },
+  { to: '/admin/companies', label: 'Companies', icon: '🏢' },
+  { to: '/admin/products', label: 'Products', icon: '📦' },
 ];
 
 export default function AdminLayout() {
@@ -15,11 +18,15 @@ export default function AdminLayout() {
           <span className="brand-mark">SN</span> Portal
         </Link>
         <nav>
-          {tabs.map((t) => (
-            <NavLink key={t.to} to={t.to} end={t.end} className="sidebar-link">
-              <span aria-hidden="true">{t.icon}</span> {t.label}
-            </NavLink>
-          ))}
+          {tabs.map((t) =>
+            t.section ? (
+              <div key={t.section} className="sidebar-section">{t.section}</div>
+            ) : (
+              <NavLink key={t.to} to={t.to} end={t.end} className="sidebar-link">
+                <span aria-hidden="true">{t.icon}</span> {t.label}
+              </NavLink>
+            ),
+          )}
         </nav>
         <Link to="/" className="sidebar-footer">← Back to website</Link>
       </aside>

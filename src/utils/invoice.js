@@ -56,16 +56,24 @@ export function suggestInvoiceNumber(existing = []) {
   return `${prefix}${String(max + 1).padStart(3, '0')}`;
 }
 
-export const emptyItem = () => ({ description: '', qty: 1, rate: 0 });
+export const emptyItem = () => ({ productId: '', description: '', hsnCode: '', qty: 1, rate: 0 });
 
 export const emptyInvoice = () => ({
   invoiceDate: todayISO(),
   invoiceNumber: '',
   poDate: '',
   poNumber: '',
+  poCompanyId: '',
   poCompany: '',
+  buyer: null,
   currency: 'INR',
   paymentTerms: '',
   taxType: 'CGST_SGST',
   items: [emptyItem()],
 });
+
+// Address object -> array of display lines
+export function addressLines(a = {}) {
+  const cityLine = [a.city, a.state, a.pincode].filter(Boolean).join(', ');
+  return [a.addressline1, a.addressline2, cityLine, a.country].filter(Boolean);
+}

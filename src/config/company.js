@@ -1,10 +1,25 @@
-// Company details shown on the public site and printed invoices.
-// Update these with your real details.
+// SN Enterprises' own details, shown on the public site and printed invoices.
 export const COMPANY = {
-  name: 'SN Enterprises',
+  name: 'SN ENTERPRISES',
   tagline: 'Reliable industrial supplies & trading',
-  address: 'Your street address, City, State - PIN',
-  phone: '+91 00000 00000',
-  email: 'info@snenterprises.example',
-  gstin: 'GSTIN-PLACEHOLDER',
+  address: {
+    addressline1: '401, Sadguru Garden, Hotel Oriental Aster lane',
+    addressline2: 'Nr. BMC School, Chakala, Andheri East',
+    city: 'Mumbai',
+    pincode: '400099',
+    country: 'India',
+  },
+  phone: '022-28383826',
+  mobile: '+91-7738939458',
+  email: 'snenterprise401@yahoo.com',
+  iec: '0313007845',
+  gst: '27ACYPA2969C1ZD',
+  bankDetails: {
+    bankName: 'HDFC Bank',
+    accountNumber: '14257630001014',
+    ifsc: 'HDFC0001425',
+    swiftCode: 'HDFCINBBXXX',
+    branch: 'MIDC CROSS ROAD BRANCH, ANDHERI (EAST)',
+  },
+  lut: 'AD2704240019843 DT. 0.1.04.2024',
 };
