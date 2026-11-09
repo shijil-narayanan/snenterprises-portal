@@ -30,3 +30,6 @@ dist-ssr
 
 # Git bundles (local backups)
 *.bundle
+
+# Local screenshots
+screenshots-tmp/
