@@ -12,6 +12,9 @@ const styles = {
   }),
   menuPortal: (base) => ({ ...base, zIndex: 50 }),
   option: (base) => ({ ...base, fontWeight: 400 }),
+  // Let long names wrap instead of being cut off
+  singleValue: (base) => ({ ...base, whiteSpace: 'normal', lineHeight: 1.3, padding: '4px 0' }),
+  valueContainer: (base) => ({ ...base, minWidth: 0 }),
   placeholder: (base) => ({ ...base, color: '#6b7280' }),
 };
 

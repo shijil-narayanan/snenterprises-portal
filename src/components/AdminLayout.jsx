@@ -1,4 +1,5 @@
-import { Link, NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import Flash from './Flash';
 import { isFirebaseConfigured } from '../firebase';
 
 const tabs = [
@@ -11,6 +12,7 @@ const tabs = [
 ];
 
 export default function AdminLayout() {
+  const location = useLocation();
   return (
     <div className="admin">
       <aside className="sidebar no-print">
@@ -38,6 +40,7 @@ export default function AdminLayout() {
           </div>
         )}
         <div className="admin-content">
+          <Flash key={location.key} />
           <Outlet />
         </div>
       </div>
