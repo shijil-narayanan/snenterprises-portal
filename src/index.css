@@ -276,3 +276,12 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
 .date-input .react-datepicker__input-container { display: block; }
 .react-datepicker-popper { z-index: 50; }
 .react-datepicker { font-family: inherit; }
+
+/* PDF download */
+.btn-secondary-block { margin-top: 8px; }
+.mobile-savebar-actions { display: flex; align-items: center; gap: 8px; }
+.spinner { width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; display: inline-block; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+/* Off-screen copy of the invoice that is turned into the PDF (A4 content width at 96dpi) */
+.pdf-render-host { position: fixed; left: -10000px; top: 0; width: 720px; background: #fff; }
+.pdf-render-host .paper { border: 0; box-shadow: none; border-radius: 0; padding: 0; margin: 0; max-width: none; font-size: 13px; }

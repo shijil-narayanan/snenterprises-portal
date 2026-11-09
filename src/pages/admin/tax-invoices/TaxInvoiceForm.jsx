@@ -9,6 +9,7 @@ import InvoiceTotals from './InvoiceTotals';
 import DateInput from '../../../components/DateInput';
 import SearchSelect from '../../../components/SearchSelect';
 import { ArrowLeftIcon, PlusIcon, TrashIcon } from '../../../components/Icons';
+import DownloadPdfButton from '../../../components/DownloadPdfButton';
 import {
   addressLines,
   amountInWords,
@@ -214,20 +215,39 @@ export default function TaxInvoiceForm() {
     if (!isDirty || window.confirm('Discard your unsaved changes?')) navigate(backTo);
   };
 
+  // Show errors and scroll to the first one; returns true when the form is valid
+  const checkValid = () => {
+    setSubmitted(true);
+    if (!Object.keys(allErrors).length) return true;
+    requestAnimationFrame(() =>
+      document.querySelector('.field-error')?.closest('.field, .panel')?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
+    );
+    return false;
+  };
+
+  // The invoice as it will be saved (only rows with a product)
+  const buildInvoice = () => {
+    const items = form.items
+      .filter((it) => it.description.trim())
+      .map((it) => ({ ...it, qty: Number(it.qty) || 0, rate: Number(it.rate) || 0, amount: lineAmount(it) }));
+    return {
+      ...form,
+      items,
+      buyer: company ? buyerSnapshot(company) : form.buyer,
+      totals: computeTotals(items, form.taxType),
+    };
+  };
+
+  // Download works for unsaved invoices too
+  const getInvoiceForPdf = () => (checkValid() ? buildInvoice() : null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
     setSaveError('');
-    if (Object.keys(allErrors).length) {
-      requestAnimationFrame(() =>
-        document.querySelector('.field-error')?.closest('.field, .panel')?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
-      );
-      return;
-    }
+    if (!checkValid()) return;
     setSaving(true);
     try {
-      const items = form.items.filter((it) => it.description.trim());
-      const data = { ...form, items, buyer: company ? buyerSnapshot(company) : form.buyer };
+      const data = buildInvoice();
       const savedId = isEdit ? (await updateTaxInvoice(id, data), id) : await createTaxInvoice(data);
       setSavedJson(JSON.stringify(form));
       navigate(`/admin/tax-invoices/${savedId}`, { state: { flash: isEdit ? 'Invoice updated' : 'Invoice created' } });
@@ -254,6 +274,7 @@ export default function TaxInvoiceForm() {
         </div>
         <div className="page-head-actions">
           <button type="button" className="btn" onClick={handleCancel}>Cancel</button>
+          <DownloadPdfButton getInvoice={getInvoiceForPdf} />
           <button type="submit" className="btn btn-primary" disabled={saving}>{saveLabel}</button>
         </div>
       </div>
@@ -435,6 +456,7 @@ export default function TaxInvoiceForm() {
             <InvoiceTotals totals={totals} taxType={form.taxType} currency={form.currency} />
             <p className="in-words">{amountInWords(totals.grandTotal, form.currency)}</p>
             <button type="submit" className="btn btn-primary btn-block" disabled={saving}>{saveLabel}</button>
+            <DownloadPdfButton className="btn btn-block btn-secondary-block" getInvoice={getInvoiceForPdf} />
             <p className="kbd-hint"><kbd>Ctrl</kbd> + <kbd>S</kbd> to save</p>
           </div>
         </aside>
@@ -446,7 +468,10 @@ export default function TaxInvoiceForm() {
           <div className="muted small">Grand total</div>
           <strong>{formatMoney(totals.grandTotal, form.currency)}</strong>
         </div>
-        <button type="submit" className="btn btn-primary" disabled={saving}>{saveLabel}</button>
+        <div className="mobile-savebar-actions">
+          <DownloadPdfButton iconOnly getInvoice={getInvoiceForPdf} />
+          <button type="submit" className="btn btn-primary" disabled={saving}>{saveLabel}</button>
+        </div>
       </div>
     </form>
   );

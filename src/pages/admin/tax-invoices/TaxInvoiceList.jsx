@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { deleteTaxInvoice, listTaxInvoices } from '../../../services/taxInvoices';
 import { formatDate, formatMoney, todayISO } from '../../../utils/invoice';
 import { CopyIcon, EditIcon, PlusIcon, SearchIcon, TrashIcon } from '../../../components/Icons';
+import DownloadPdfButton from '../../../components/DownloadPdfButton';
 
 // Newest invoice date first, then most recently created
 const byInvoiceDate = (a, b) =>
@@ -125,6 +126,7 @@ export default function TaxInvoiceList() {
                       <td>{inv.poNumber || '—'}</td>
                       <td className="num strong nowrap">{formatMoney(inv.totals?.grandTotal, inv.currency)}</td>
                       <td className="actions" onClick={stop}>
+                        <DownloadPdfButton iconOnly getInvoice={() => inv} />
                         <Link to={`/admin/tax-invoices/${inv.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>
                         <Link to={`/admin/tax-invoices/new?from=${inv.id}`} className="icon-btn" title="Duplicate" aria-label="Duplicate"><CopyIcon /></Link>
                         <button className="icon-btn icon-btn-danger" title="Delete" aria-label="Delete" onClick={() => handleDelete(inv)}><TrashIcon /></button>
