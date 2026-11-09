@@ -10,6 +10,7 @@ import DateInput from '../../../components/DateInput';
 import SearchSelect from '../../../components/SearchSelect';
 import { ArrowLeftIcon, PlusIcon, TrashIcon } from '../../../components/Icons';
 import DownloadPdfButton from '../../../components/DownloadPdfButton';
+import useFormGuards from '../../../hooks/useFormGuards';
 import {
   addressLines,
   amountInWords,
@@ -135,27 +136,7 @@ export default function TaxInvoiceForm() {
 
   // ---------- Unsaved changes ----------
   const isDirty = savedJson !== null && JSON.stringify(form) !== savedJson;
-  useEffect(() => {
-    if (!isDirty || saving) return undefined;
-    const onBeforeUnload = (e) => {
-      e.preventDefault();
-      e.returnValue = '';
-    };
-    window.addEventListener('beforeunload', onBeforeUnload);
-    return () => window.removeEventListener('beforeunload', onBeforeUnload);
-  }, [isDirty, saving]);
-
-  // Ctrl/Cmd + S saves
-  useEffect(() => {
-    const onKey = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
-        e.preventDefault();
-        formRef.current?.requestSubmit();
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  useFormGuards({ isDirty, saving, formRef });
 
   // ---------- Field updates ----------
   const update = (changes) => setForm((f) => ({ ...f, ...changes }));
