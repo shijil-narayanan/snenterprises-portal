@@ -283,8 +283,14 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
 .spinner { width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; display: inline-block; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 /* Off-screen copy of the invoice that is turned into the PDF (A4 content width at 96dpi) */
-.pdf-render-host { position: fixed; left: -10000px; top: 0; width: 720px; background: #fff; }
+/* Side padding leaves room for text the PDF renderer draws slightly wider than the browser */
+.pdf-render-host { position: fixed; left: -10000px; top: 0; width: 744px; padding: 0 12px; background: #fff; }
 .pdf-render-host .paper { border: 0; box-shadow: none; border-radius: 0; padding: 0; margin: 0; max-width: none; font-size: 13px; }
+/* The PDF always uses the desktop layout, whatever device creates it */
+.pdf-render-host .paper-head, .pdf-render-host .paper-foot { flex-direction: row; }
+.pdf-render-host .paper-boxes { grid-template-columns: 1fr 1fr; }
+.pdf-render-host .paper-bottom { grid-template-columns: 1fr 300px; }
+.pdf-render-host .paper-box + .paper-box { border-left: 1px solid #cbd2dc; border-top: 0; }
 
 /* Companies & products */
 .toolbar-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -320,4 +326,28 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
 }
 @media screen and (max-width: 800px) {
   .summary .danger-zone .btn-block { display: flex; }
+}
+
+/* Modal */
+.modal-backdrop { position: fixed; inset: 0; z-index: 200; background: rgba(15, 23, 42, 0.55); display: flex; align-items: center; justify-content: center; padding: 24px; animation: fade-in 0.15s ease-out; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.modal { background: #fff; border-radius: 12px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); display: flex; flex-direction: column; max-height: 100%; width: 100%; }
+.modal-pdf { max-width: 860px; height: calc(100vh - 48px); }
+.modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.modal-head h2 { margin: 0; }
+.modal-head p { margin: 2px 0 0; }
+.modal-body { flex: 1; overflow: auto; }
+.modal-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 20px; border-top: 1px solid var(--border); background: #fafbfc; border-radius: 0 0 12px 12px; }
+.modal-foot-actions { display: flex; gap: 8px; margin-left: auto; }
+.pdf-stage { background: #e5e9ef; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.pdf-page-wrap { width: 100%; max-width: 760px; flex-shrink: 0; }
+.pdf-page { width: 100%; aspect-ratio: 210 / 297; background: #fff; box-shadow: 0 2px 12px rgba(15, 39, 71, 0.18); padding: 4.76%; }
+.pdf-page img { display: block; width: 100%; height: auto; }
+.pdf-page-no { display: block; text-align: center; margin-top: 8px; font-size: 0.8rem; color: var(--muted); }
+.pdf-loading { display: flex; align-items: center; gap: 10px; color: var(--muted); margin: auto; }
+@media screen and (max-width: 800px) {
+  .modal-backdrop { padding: 0; }
+  .modal-pdf { height: 100%; border-radius: 0; }
+  .modal-foot { border-radius: 0; }
+  .pdf-stage { padding: 12px; }
 }

@@ -8,8 +8,8 @@ import { COMPANY } from '../../../config/company';
 import InvoiceTotals from './InvoiceTotals';
 import DateInput from '../../../components/DateInput';
 import SearchSelect from '../../../components/SearchSelect';
-import { ArrowLeftIcon, PlusIcon, TrashIcon } from '../../../components/Icons';
-import DownloadPdfButton from '../../../components/DownloadPdfButton';
+import { ArrowLeftIcon, FileIcon, PlusIcon, TrashIcon } from '../../../components/Icons';
+import PdfPreviewModal from '../../../components/PdfPreviewModal';
 import useFormGuards from '../../../hooks/useFormGuards';
 import {
   addressLines,
@@ -64,6 +64,7 @@ export default function TaxInvoiceForm() {
   const [loadError, setLoadError] = useState('');
   const [saveError, setSaveError] = useState('');
   const [taxHint, setTaxHint] = useState('');
+  const [previewInvoice, setPreviewInvoice] = useState(null);
 
   const formRef = useRef(null);
   // JSON of the last saved/loaded form, to detect unsaved changes
@@ -219,8 +220,11 @@ export default function TaxInvoiceForm() {
     };
   };
 
-  // Download works for unsaved invoices too
-  const getInvoiceForPdf = () => (checkValid() ? buildInvoice() : null);
+  // Preview works for unsaved invoices too
+  const openPreview = () => {
+    if (checkValid()) setPreviewInvoice(buildInvoice());
+  };
+  const closePreview = useCallback(() => setPreviewInvoice(null), []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -255,7 +259,7 @@ export default function TaxInvoiceForm() {
         </div>
         <div className="page-head-actions">
           <button type="button" className="btn" onClick={handleCancel}>Cancel</button>
-          <DownloadPdfButton getInvoice={getInvoiceForPdf} />
+          <button type="button" className="btn" onClick={openPreview}><FileIcon /> Preview PDF</button>
           <button type="submit" className="btn btn-primary" disabled={saving}>{saveLabel}</button>
         </div>
       </div>
@@ -437,7 +441,7 @@ export default function TaxInvoiceForm() {
             <InvoiceTotals totals={totals} taxType={form.taxType} currency={form.currency} />
             <p className="in-words">{amountInWords(totals.grandTotal, form.currency)}</p>
             <button type="submit" className="btn btn-primary btn-block" disabled={saving}>{saveLabel}</button>
-            <DownloadPdfButton className="btn btn-block btn-secondary-block" getInvoice={getInvoiceForPdf} />
+            <button type="button" className="btn btn-block btn-secondary-block" onClick={openPreview}><FileIcon /> Preview PDF</button>
             <p className="kbd-hint"><kbd>Ctrl</kbd> + <kbd>S</kbd> to save</p>
           </div>
         </aside>
@@ -450,10 +454,12 @@ export default function TaxInvoiceForm() {
           <strong>{formatMoney(totals.grandTotal, form.currency)}</strong>
         </div>
         <div className="mobile-savebar-actions">
-          <DownloadPdfButton iconOnly getInvoice={getInvoiceForPdf} />
+          <button type="button" className="icon-btn" onClick={openPreview} title="Preview PDF" aria-label="Preview PDF"><FileIcon /></button>
           <button type="submit" className="btn btn-primary" disabled={saving}>{saveLabel}</button>
         </div>
       </div>
+
+      {previewInvoice && <PdfPreviewModal invoice={previewInvoice} onClose={closePreview} />}
     </form>
   );
 }
