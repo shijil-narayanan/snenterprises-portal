@@ -26,6 +26,11 @@ export async function buildInvoicePdf(invoice) {
   try {
     flushSync(() => root.render(<InvoiceDocument invoice={invoice} />));
     if (document.fonts?.ready) await document.fonts.ready;
+    // Wait for images (the logo) so they are in the capture
+    await Promise.all(
+      [...host.querySelectorAll('img')].map((img) =>
+        img.complete ? null : new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; })),
+    );
 
     const canvas = await html2canvas(host, { scale: 2, backgroundColor: '#ffffff' });
 

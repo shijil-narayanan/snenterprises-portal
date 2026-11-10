@@ -211,6 +211,8 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
 /* Invoice document (screen + print) */
 .paper { background: #fff; max-width: 900px; margin: 0 auto 24px; padding: 40px 44px; border: 1px solid #e3e8ef; border-radius: 4px; box-shadow: 0 2px 10px rgba(15,39,71,0.06); font-size: 0.9rem; line-height: 1.45; color: #111827; }
 .paper-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; padding-bottom: 16px; border-bottom: 3px solid var(--blue); }
+.paper-brand { display: flex; align-items: flex-start; gap: 16px; }
+.paper-logo { width: 112px; height: auto; flex-shrink: 0; }
 .paper-company { font-size: 1.4rem; font-weight: 800; color: var(--blue); letter-spacing: 0.02em; margin-bottom: 4px; }
 .paper-title { font-size: 1.5rem; font-weight: 800; letter-spacing: 0.12em; color: #111827; white-space: nowrap; }
 .paper-boxes { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #cbd2dc; margin: 20px 0; }
@@ -253,6 +255,7 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
   .mobile-savebar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; background: #fff; border-top: 1px solid var(--border); box-shadow: 0 -4px 12px rgba(0,0,0,0.06); }
   .paper { padding: 20px; }
   .paper-head, .paper-foot { flex-direction: column; }
+  .paper-logo { width: 88px; }
   .paper-boxes, .paper-bottom { grid-template-columns: 1fr; }
   .paper-box + .paper-box { border-left: 0; border-top: 1px solid #cbd2dc; }
   .flash { left: 16px; right: 16px; bottom: 80px; }
@@ -287,7 +290,7 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
 .pdf-render-host { position: fixed; left: -10000px; top: 0; width: 744px; padding: 0 12px; background: #fff; }
 .pdf-render-host .paper { border: 0; box-shadow: none; border-radius: 0; padding: 0; margin: 0; max-width: none; font-size: 13px; }
 /* The PDF always uses the desktop layout, whatever device creates it */
-.pdf-render-host .paper-head, .pdf-render-host .paper-foot { flex-direction: row; }
+.pdf-render-host .paper-head, .pdf-render-host .paper-foot, .pdf-render-host .paper-brand { flex-direction: row; }
 .pdf-render-host .paper-boxes { grid-template-columns: 1fr 1fr; }
 .pdf-render-host .paper-bottom { grid-template-columns: 1fr 300px; }
 .pdf-render-host .paper-box + .paper-box { border-left: 1px solid #cbd2dc; border-top: 0; }
