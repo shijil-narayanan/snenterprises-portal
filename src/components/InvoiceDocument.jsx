@@ -17,7 +17,7 @@ export default function InvoiceDocument({ invoice }) {
         <div>
           <div className="paper-company">{COMPANY.name}</div>
           {addressLines(COMPANY.address).map((l) => <div key={l}>{l}</div>)}
-          <div>Tel: {COMPANY.phone} · Mob: {COMPANY.mobile}</div>
+          <div>Mob: {COMPANY.mobile}</div>
           <div>Email: {COMPANY.email}</div>
           <div><strong>GSTIN:</strong> {COMPANY.gst}</div>
         </div>

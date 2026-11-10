@@ -7,7 +7,7 @@ export default function Contact() {
       <h1>Contact Us</h1>
       <div className="card">
         <p><strong>Address:</strong> {addressLines(COMPANY.address).join(', ')}</p>
-        <p><strong>Phone:</strong> {COMPANY.phone} · {COMPANY.mobile}</p>
+        <p><strong>Mobile:</strong> {COMPANY.mobile}</p>
         <p><strong>Email:</strong> <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></p>
       </div>
     </section>

@@ -9,7 +9,6 @@ export const COMPANY = {
     pincode: '400099',
     country: 'India',
   },
-  phone: '022-28383826',
   mobile: '+91-7738939458',
   email: 'snenterprise401@yahoo.com',
   iec: '0313007845',
