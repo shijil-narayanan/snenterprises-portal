@@ -51,7 +51,7 @@ export default function PackingListDocument({ list, fillPage = false }) {
   const showItemLabels = items.length > 1;
 
   return (
-    <article className={`paper ci-doc${fillPage ? ' ci-fill' : ''}`}>
+    <article className={`paper ci-doc doc-a4${fillPage ? ' ci-fill' : ''}`}>
       <DocumentHeader title="Packing List" company={list.seller || current} showIec />
       <ExportPartiesAndShipping doc={doc} />
 

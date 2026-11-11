@@ -25,7 +25,7 @@ export function ExportPartiesAndShipping({ doc: invoice }) {
       {/* Parties */}
       <div className="ci-grid ci-parties">
         <div className="ci-th ci-left">Consignee / Importer</div>
-        <div className="ci-th">Buyer (If not consignee)</div>
+        <div className="ci-th">Buyer</div>
         <div className="ci-th">Purchase Order</div>
         <div className="ci-th">Invoice Details</div>
         <div className="ci-td ci-left"><Party company={invoice.consignee} /></div>

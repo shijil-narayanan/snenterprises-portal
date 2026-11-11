@@ -21,7 +21,7 @@ export default function CommercialInvoiceDocument({ invoice, fillPage = false })
   const groups = groupItemsByHsn(invoice.items || []);
 
   return (
-    <article className={`paper ci-doc${fillPage ? ' ci-fill' : ''}`}>
+    <article className={`paper ci-doc doc-a4${fillPage ? ' ci-fill' : ''}`}>
       <DocumentHeader title="Commercial Invoice" company={invoice.seller || current} showIec />
 
       <ExportPartiesAndShipping doc={invoice} />

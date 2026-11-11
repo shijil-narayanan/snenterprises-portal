@@ -88,7 +88,7 @@ export async function buildPdf(element, fileName) {
   }
 }
 
-export const buildInvoicePdf = (invoice) => buildPdf(<InvoiceDocument invoice={invoice} />, invoicePdfFileName(invoice));
+export const buildInvoicePdf = (invoice) => buildPdf(<InvoiceDocument invoice={invoice} fillPage />, invoicePdfFileName(invoice));
 export const buildCommercialPdf = (invoice) =>
   buildPdf(<CommercialInvoiceDocument invoice={invoice} fillPage />, commercialPdfFileName(invoice));
 

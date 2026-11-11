@@ -5,7 +5,7 @@ import InvoiceTotals from '../pages/admin/tax-invoices/InvoiceTotals';
 import DocumentHeader from './DocumentHeader';
 
 /** The printable tax invoice. Used on the invoice page, for printing and for PDF downloads. */
-export default function InvoiceDocument({ invoice }) {
+export default function InvoiceDocument({ invoice, fillPage = false }) {
   const totals = invoice.totals || computeTotals(invoice.items, invoice.taxType);
   const buyer = invoice.buyer || {};
   const buyerContact = [buyer.email, buyer.mobile || buyer.phone].filter(Boolean).join(' · ');
@@ -16,7 +16,7 @@ export default function InvoiceDocument({ invoice }) {
   const taxLabel = TAX_TYPES.find((t) => t.value === invoice.taxType)?.short;
 
   return (
-    <article className="paper">
+    <article className={`paper tax-doc doc-a4${fillPage ? ' ci-fill' : ''}`}>
       <DocumentHeader title="Tax Invoice" company={company} />
 
       <div className="paper-boxes">
@@ -39,30 +39,37 @@ export default function InvoiceDocument({ invoice }) {
         </div>
       </div>
 
-      <table className="paper-table">
-        <thead>
-          <tr>
-            <th className="col-sr">Sr.</th>
-            <th>Description of Goods</th>
-            <th>HSN</th>
-            <th className="num">Qty</th>
-            <th className="num">Rate</th>
-            <th className="num">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {invoice.items.map((it, i) => (
-            <tr key={i}>
-              <td className="col-sr">{i + 1}</td>
-              <td>{it.description}</td>
-              <td>{it.hsnCode || '—'}</td>
-              <td className="num">{it.qty}</td>
-              <td className="num">{formatMoney(it.rate, invoice.currency)}</td>
-              <td className="num">{formatMoney(it.amount, invoice.currency)}</td>
+      {/* Items grow to fill the page so the totals and signature sit at the bottom */}
+      <div className="paper-items">
+        <table className="paper-table">
+          <colgroup>
+            <col className="col-sr" /><col /><col className="col-hsn" /><col className="col-qty" /><col className="col-rate" /><col className="col-amount" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th className="col-sr">Sr.</th>
+              <th>Description of Goods</th>
+              <th>HSN</th>
+              <th className="num">Qty</th>
+              <th className="num">Rate</th>
+              <th className="num">Amount</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {invoice.items.map((it, i) => (
+              <tr key={i}>
+                <td className="col-sr">{i + 1}</td>
+                <td>{it.description}</td>
+                <td>{it.hsnCode || '—'}</td>
+                <td className="num">{it.qty}</td>
+                <td className="num">{formatMoney(it.rate, invoice.currency)}</td>
+                <td className="num">{formatMoney(it.amount, invoice.currency)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="paper-filler" aria-hidden="true"><span /><span /><span /><span /><span /><span /></div>
+      </div>
 
       <div className="paper-bottom">
         <div className="paper-left">

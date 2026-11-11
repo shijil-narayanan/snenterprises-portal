@@ -542,3 +542,35 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
   .sidebar-closed .sidebar nav, .sidebar-closed .sidebar-user { display: none; }
 }
 .sidebar-brand:hover { text-decoration: none; }
+
+/* ---- A4 sheet: items grow so totals, bank and signature sit at the bottom of the page ---- */
+.doc-a4 { display: flex; flex-direction: column; }
+@media screen and (min-width: 801px) {
+  .doc-a4 { aspect-ratio: 210 / 297; } /* on screen: an A4-shaped sheet (grows if the content is longer) */
+}
+.pdf-render-host .doc-a4 { aspect-ratio: auto; } /* PDF: exact page height comes from .ci-fill */
+
+/* Tax invoice: fixed column widths so the filler below the rows continues the column lines */
+.tax-doc { --tx-cols: 40px minmax(0, 1fr) 92px 56px 96px 108px; }
+.paper-items { flex: 1; display: flex; flex-direction: column; }
+.paper-items .paper-table { table-layout: fixed; }
+.paper-table .col-sr { width: 40px; }
+.paper-table .col-hsn { width: 92px; }
+.paper-table .col-qty { width: 56px; }
+.paper-table .col-rate { width: 96px; }
+.paper-table .col-amount { width: 108px; }
+.paper-filler { flex: 1; min-height: 24px; display: grid; grid-template-columns: var(--tx-cols); border: 1px solid #cbd2dc; border-top: 0; }
+.paper-filler > span + span { border-left: 1px solid #cbd2dc; }
+.paper-items .paper-table tbody tr:last-child td { border-bottom: 0; }
+@media screen and (max-width: 800px) {
+  .tax-doc { --tx-cols: 28px minmax(0, 1fr) 64px 40px 64px 72px; }
+  .paper-table .col-sr { width: 28px; } .paper-table .col-hsn { width: 64px; } .paper-table .col-qty { width: 40px; }
+  .paper-table .col-rate { width: 64px; } .paper-table .col-amount { width: 72px; }
+  .pdf-render-host .tax-doc { --tx-cols: 40px minmax(0, 1fr) 92px 56px 96px 108px; }
+  .pdf-render-host .paper-table .col-sr { width: 40px; } .pdf-render-host .paper-table .col-hsn { width: 92px; }
+  .pdf-render-host .paper-table .col-qty { width: 56px; } .pdf-render-host .paper-table .col-rate { width: 96px; }
+  .pdf-render-host .paper-table .col-amount { width: 108px; }
+}
+@media print {
+  .doc-a4 { aspect-ratio: auto; min-height: 296mm; } /* one full A4 page (12mm padding included) */
+}
