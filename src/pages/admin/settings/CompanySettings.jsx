@@ -98,7 +98,7 @@ export default function CompanySettings() {
       setMeta(saved);
       setNeverSaved(false);
       setSubmitted(false);
-      setFlash('Company settings saved');
+      setFlash('Settings saved');
       setTimeout(() => setFlash(''), 3500);
     } catch (err) {
       setError(err.message);
@@ -119,7 +119,7 @@ export default function CompanySettings() {
     <form ref={formRef} onSubmit={handleSubmit} noValidate>
       <div className="page-head">
         <div>
-          <h1>Company Settings {isDirty && <span className="badge">Unsaved</span>}</h1>
+          <h1>Settings {isDirty && <span className="badge">Unsaved</span>}</h1>
           <p className="muted">Your own details, printed on tax invoices, commercial invoices and packing lists.</p>
           {meta?.updatedAt && (
             <p className="audit-line">

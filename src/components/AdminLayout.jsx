@@ -15,7 +15,7 @@ const tabs = [
   { to: '/admin/companies', label: 'Companies', icon: '🏢' },
   { to: '/admin/products', label: 'Products', icon: '🏷️' },
   { section: 'Setup' },
-  { to: '/admin/settings', label: 'Company Settings', icon: '⚙️' },
+  { to: '/admin/settings', label: 'Settings', icon: '⚙️' },
 ];
 
 export default function AdminLayout() {
