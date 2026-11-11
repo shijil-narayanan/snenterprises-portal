@@ -6,6 +6,7 @@ import { formatDate, formatMoney, todayISO } from '../../../utils/invoice';
 import { downloadCommercialPdf } from '../../../utils/invoicePdf';
 import { BoxIcon, CopyIcon, EditIcon, PlusIcon, SearchIcon, TrashIcon } from '../../../components/Icons';
 import DownloadPdfButton from '../../../components/DownloadPdfButton';
+import { CreatedByCell } from '../../../components/AuditInfo';
 
 const byInvoiceDate = (a, b) =>
   (b.invoiceDate || '').localeCompare(a.invoiceDate || '') || (b.createdAt || '').localeCompare(a.createdAt || '');
@@ -111,6 +112,7 @@ export default function CommercialInvoiceList() {
                     <th>Consignee</th>
                     <th className="hide-sm">Shipping</th>
                     <th className="num">Amount</th>
+                    <th className="hide-sm">Created by</th>
                     <th className="actions"><span className="sr-only">Actions</span></th>
                   </tr>
                 </thead>
@@ -128,6 +130,7 @@ export default function CommercialInvoiceList() {
                         <div className="muted small">{[inv.vesselFlight, inv.destination].filter(Boolean).join(' · ')}</div>
                       </td>
                       <td className="num strong nowrap">{formatMoney(inv.total, inv.currency)}</td>
+                      <td className="hide-sm"><CreatedByCell record={inv} /></td>
                       <td className="actions" onClick={stop}>
                         <DownloadPdfButton iconOnly getInvoice={() => inv} download={downloadCommercialPdf} />
                         {packingByInvoice[inv.id] ? (

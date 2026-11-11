@@ -21,6 +21,7 @@ import { companySnapshot, validateExportHeader } from '../../../utils/exportForm
 import { buildPackingPdf } from '../../../utils/invoicePdf';
 import { formatDate } from '../../../utils/invoice';
 import { packageNumbers, suggestCommercialNumber } from '../../../utils/commercial';
+import { AuditLine } from '../../../components/AuditInfo';
 import {
   emptyPackingItem,
   emptyPackingList,
@@ -59,6 +60,8 @@ export default function PackingListForm() {
   const formRef = useRef(null);
 
   const [form, setForm] = useState(emptyPackingList);
+
+  const [meta, setMeta] = useState(null); // who created / last updated the record
   const [savedJson, setSavedJson] = useState(null);
   const [companies, setCompanies] = useState([]);
   const [products, setProducts] = useState([]);
@@ -89,6 +92,7 @@ export default function PackingListForm() {
         if (isEdit) {
           const pl = lists.find((l) => l.id === id) || (await getPackingList(id));
           if (!pl) throw new Error('Packing list not found');
+          setMeta(pl);
           const base = emptyPackingList();
           initial = { ...base, ...pl, marks: { ...base.marks, ...pl.marks }, items: pl.items?.length ? pl.items : [emptyPackingItem()] };
           ['id', 'createdAt', 'updatedAt', 'totals', 'packages'].forEach((k) => delete initial[k]);
@@ -259,6 +263,7 @@ export default function PackingListForm() {
             {isEdit ? `Edit packing list ${form.invoiceNumber}` : 'New Packing List'}
             {isDirty && <span className="badge">Unsaved</span>}
           </h1>
+          {isEdit && <AuditLine record={meta} />}
         </div>
         <div className="page-head-actions">
           <button type="button" className="btn" onClick={handleCancel}>Cancel</button>

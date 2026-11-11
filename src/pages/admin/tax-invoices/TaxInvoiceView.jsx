@@ -5,6 +5,7 @@ import { computeTotals, formatDate, formatMoney } from '../../../utils/invoice';
 import InvoiceDocument from '../../../components/InvoiceDocument';
 import DownloadPdfButton from '../../../components/DownloadPdfButton';
 import { ArrowLeftIcon, CopyIcon, EditIcon, PrintIcon, TrashIcon } from '../../../components/Icons';
+import { AuditLine } from '../../../components/AuditInfo';
 
 export default function TaxInvoiceView() {
   const { id } = useParams();
@@ -55,6 +56,7 @@ export default function TaxInvoiceView() {
           <p className="muted">
             {invoice.poCompany || 'No company'} · {formatDate(invoice.invoiceDate)} · {formatMoney(totals.grandTotal, invoice.currency)}
           </p>
+          <AuditLine record={invoice} />
         </div>
         <div className="page-head-actions">
           <button className="btn" onClick={() => navigate(`/admin/tax-invoices/new?from=${id}`)} title="Start a new invoice with the same buyer and items">

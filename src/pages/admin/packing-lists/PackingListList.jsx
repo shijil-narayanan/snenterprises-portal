@@ -6,6 +6,7 @@ import { formatWeight } from '../../../utils/packing';
 import { downloadPackingPdf } from '../../../utils/invoicePdf';
 import { CopyIcon, EditIcon, PlusIcon, SearchIcon, TrashIcon } from '../../../components/Icons';
 import DownloadPdfButton from '../../../components/DownloadPdfButton';
+import { CreatedByCell } from '../../../components/AuditInfo';
 
 const byInvoiceDate = (a, b) =>
   (b.invoiceDate || '').localeCompare(a.invoiceDate || '') || (b.createdAt || '').localeCompare(a.createdAt || '');
@@ -101,6 +102,7 @@ export default function PackingListList() {
                     <th>Consignee</th>
                     <th className="num hide-sm">Packages</th>
                     <th className="num">Net / Gross (kg)</th>
+                    <th className="hide-sm">Created by</th>
                     <th className="actions"><span className="sr-only">Actions</span></th>
                   </tr>
                 </thead>
@@ -117,6 +119,7 @@ export default function PackingListList() {
                       <td className="num nowrap">
                         <span className="muted">{formatWeight(l.totals?.net)}</span> / <strong>{formatWeight(l.totals?.gross)}</strong>
                       </td>
+                      <td className="hide-sm"><CreatedByCell record={l} /></td>
                       <td className="actions" onClick={stop}>
                         <DownloadPdfButton iconOnly getInvoice={() => l} download={downloadPackingPdf} />
                         <Link to={`/admin/packing-lists/${l.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>

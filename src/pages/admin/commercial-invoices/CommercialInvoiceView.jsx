@@ -7,6 +7,7 @@ import { commercialPdfFileName, downloadCommercialPdf } from '../../../utils/inv
 import CommercialInvoiceDocument from '../../../components/CommercialInvoiceDocument';
 import DownloadPdfButton from '../../../components/DownloadPdfButton';
 import { ArrowLeftIcon, BoxIcon, CopyIcon, EditIcon, PrintIcon, TrashIcon } from '../../../components/Icons';
+import { AuditLine } from '../../../components/AuditInfo';
 
 export default function CommercialInvoiceView() {
   const { id } = useParams();
@@ -59,6 +60,7 @@ export default function CommercialInvoiceView() {
           <p className="muted">
             {invoice.consignee?.name || 'No consignee'} · {formatDate(invoice.invoiceDate)} · {formatMoney(invoice.total, invoice.currency)}
           </p>
+          <AuditLine record={invoice} />
         </div>
         <div className="page-head-actions">
           <button className="btn" onClick={() => navigate(`/admin/commercial-invoices/new?from=${id}`)} title="Start a new invoice with the same consignee, shipping and items">

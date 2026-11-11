@@ -7,6 +7,7 @@ import { downloadPackingPdf, packingPdfFileName } from '../../../utils/invoicePd
 import PackingListDocument from '../../../components/PackingListDocument';
 import DownloadPdfButton from '../../../components/DownloadPdfButton';
 import { ArrowLeftIcon, CopyIcon, EditIcon, PrintIcon, TrashIcon } from '../../../components/Icons';
+import { AuditLine } from '../../../components/AuditInfo';
 
 export default function PackingListView() {
   const { id } = useParams();
@@ -55,6 +56,7 @@ export default function PackingListView() {
             {list.consignee?.name || 'No consignee'} · {formatDate(list.invoiceDate)} · {list.totals?.boxes || 0} boxes · {formatWeight(list.totals?.gross)} kg gross
             {list.commercialInvoiceId && <> · <Link to={`/admin/commercial-invoices/${list.commercialInvoiceId}`}>View commercial invoice</Link></>}
           </p>
+          <AuditLine record={list} />
         </div>
         <div className="page-head-actions">
           <button className="btn" onClick={() => navigate(`/admin/packing-lists/new?from=${id}`)} title="Start a new packing list with the same consignee, shipping and items">

@@ -4,6 +4,7 @@ import { companiesService } from '../../../services/companies';
 import { listTaxInvoices } from '../../../services/taxInvoices';
 import { EditIcon, PlusIcon, SearchIcon, TrashIcon } from '../../../components/Icons';
 import { addressLines } from '../../../utils/invoice';
+import { CreatedByCell } from '../../../components/AuditInfo';
 
 // Domestic = has a GSTIN or an Indian address; everything else is an export customer
 const isDomestic = (c) => Boolean(c.gst) || /india/i.test(c.address?.country || '') || (!c.address?.country && Boolean(c.address?.state));
@@ -123,6 +124,7 @@ export default function CompanyList() {
                     <th className="hide-sm">GSTIN</th>
                     <th className="hide-sm">Contact</th>
                     <th className="num">Invoices</th>
+                    <th className="hide-sm">Created by</th>
                     <th className="actions"><span className="sr-only">Actions</span></th>
                   </tr>
                 </thead>
@@ -144,6 +146,7 @@ export default function CompanyList() {
                           <div className="muted small">{c.mobile || c.phone}</div>
                         </td>
                         <td className="num">{invoiceCounts[c.id] || <span className="muted">0</span>}</td>
+                        <td className="hide-sm"><CreatedByCell record={c} /></td>
                         <td className="actions" onClick={stop}>
                           <Link to={`/admin/companies/${c.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>
                           <button className="icon-btn icon-btn-danger" title="Delete" aria-label="Delete" onClick={() => handleDelete(c)}><TrashIcon /></button>

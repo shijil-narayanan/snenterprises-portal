@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { productsService } from '../../../services/products';
 import { listTaxInvoices } from '../../../services/taxInvoices';
 import { EditIcon, PlusIcon, SearchIcon, TrashIcon } from '../../../components/Icons';
+import { CreatedByCell } from '../../../components/AuditInfo';
 
 const FILTERS = [
   { value: 'all', label: 'All' },
@@ -122,6 +123,7 @@ export default function ProductList() {
                     <th>Product</th>
                     <th>HSN</th>
                     <th className="num hide-sm">Invoices</th>
+                    <th className="hide-sm">Created by</th>
                     <th className="actions"><span className="sr-only">Actions</span></th>
                   </tr>
                 </thead>
@@ -136,6 +138,7 @@ export default function ProductList() {
                         {p.hsnCode ? <span className="mono">{p.hsnCode}</span> : <span className="tag tag-amber">Missing</span>}
                       </td>
                       <td className="num hide-sm">{usage[p.id] || <span className="muted">0</span>}</td>
+                      <td className="hide-sm"><CreatedByCell record={p} /></td>
                       <td className="actions" onClick={stop}>
                         <Link to={`/admin/products/${p.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>
                         <button className="icon-btn icon-btn-danger" title="Delete" aria-label="Delete" onClick={() => handleDelete(p)}><TrashIcon /></button>

@@ -4,6 +4,7 @@ import { productsService } from '../../../services/products';
 import { listTaxInvoices } from '../../../services/taxInvoices';
 import useFormGuards from '../../../hooks/useFormGuards';
 import { ArrowLeftIcon, TrashIcon } from '../../../components/Icons';
+import { AuditLine } from '../../../components/AuditInfo';
 
 const EMPTY = { code: '', name: '', hsnCode: '' };
 const HSN_PATTERN = /^(\d{4}|\d{6}|\d{8})$/;
@@ -26,6 +27,8 @@ export default function ProductForm() {
   const formRef = useRef(null);
 
   const [form, setForm] = useState(EMPTY);
+
+  const [meta, setMeta] = useState(null); // who created / last updated the record
   const [savedJson, setSavedJson] = useState(null);
   const [others, setOthers] = useState([]);
   const [invoiceCount, setInvoiceCount] = useState(0);
@@ -44,6 +47,7 @@ export default function ProductForm() {
         if (isEdit) {
           const p = products.find((x) => x.id === id);
           if (!p) throw new Error('Product not found');
+          setMeta(p);
           initial = { code: p.code || '', name: p.name || '', hsnCode: p.hsnCode || '' };
           setInvoiceCount(invoices.filter((inv) => (inv.items || []).some((it) => it.productId === id)).length);
         }
@@ -135,6 +139,7 @@ export default function ProductForm() {
             {isEdit ? 'Edit Product' : 'New Product'}
             {isDirty && <span className="badge">Unsaved</span>}
           </h1>
+          {isEdit && <AuditLine record={meta} />}
         </div>
         <div className="page-head-actions">
           <button type="button" className="btn" onClick={handleCancel}>Cancel</button>

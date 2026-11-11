@@ -7,6 +7,7 @@ import { GSTIN_PATTERN, gstStateName } from '../../../config/gstStates';
 import { addressLines } from '../../../utils/invoice';
 import useFormGuards from '../../../hooks/useFormGuards';
 import { ArrowLeftIcon, TrashIcon } from '../../../components/Icons';
+import { AuditLine } from '../../../components/AuditInfo';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -40,6 +41,8 @@ export default function CompanyForm() {
   const formRef = useRef(null);
 
   const [form, setForm] = useState(() => toCompanyRecord({}));
+
+  const [meta, setMeta] = useState(null); // who created / last updated the record
   const [savedJson, setSavedJson] = useState(null);
   const [otherNames, setOtherNames] = useState(() => new Set());
   const [invoiceCount, setInvoiceCount] = useState(0);
@@ -58,6 +61,7 @@ export default function CompanyForm() {
         if (isEdit) {
           const company = companies.find((c) => c.id === id);
           if (!company) throw new Error('Company not found');
+          setMeta(company);
           initial = toCompanyRecord(company);
           setInvoiceCount(invoices.filter((inv) => inv.poCompanyId === id).length);
         }
@@ -161,6 +165,7 @@ export default function CompanyForm() {
             {isEdit ? form.name || 'Edit Company' : 'New Company'}
             {isDirty && <span className="badge">Unsaved</span>}
           </h1>
+          {isEdit && <AuditLine record={meta} />}
         </div>
         <div className="page-head-actions">
           <button type="button" className="btn" onClick={handleCancel}>Cancel</button>

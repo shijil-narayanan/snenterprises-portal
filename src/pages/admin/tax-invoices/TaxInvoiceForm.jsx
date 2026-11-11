@@ -11,6 +11,7 @@ import SearchSelect from '../../../components/SearchSelect';
 import { ArrowLeftIcon, FileIcon, PlusIcon, TrashIcon } from '../../../components/Icons';
 import PdfPreviewModal from '../../../components/PdfPreviewModal';
 import useFormGuards from '../../../hooks/useFormGuards';
+import { AuditLine } from '../../../components/AuditInfo';
 import {
   addressLines,
   amountInWords,
@@ -55,6 +56,8 @@ export default function TaxInvoiceForm() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState(emptyInvoice);
+
+  const [meta, setMeta] = useState(null); // who created / last updated the record
   const [companies, setCompanies] = useState([]);
   const [products, setProducts] = useState([]);
   const [usedNumbers, setUsedNumbers] = useState(() => new Set());
@@ -89,6 +92,7 @@ export default function TaxInvoiceForm() {
         if (isEdit) {
           const inv = all.find((i) => i.id === id) || (await getTaxInvoice(id));
           if (!inv) throw new Error('Invoice not found');
+          setMeta(inv);
           // Older invoices stored only the company name: link it to the company if the name matches
           const poCompanyId = inv.poCompanyId || companyList.find((c) => c.name === inv.poCompany)?.id || '';
           initial = { ...emptyInvoice(), ...inv, poCompanyId, items: inv.items?.length ? inv.items : [emptyItem()] };
@@ -256,6 +260,7 @@ export default function TaxInvoiceForm() {
             {isEdit ? `Edit ${form.invoiceNumber || 'Tax Invoice'}` : copyFromId ? 'New Tax Invoice (copy)' : 'New Tax Invoice'}
             {isDirty && <span className="badge">Unsaved</span>}
           </h1>
+          {isEdit && <AuditLine record={meta} />}
         </div>
         <div className="page-head-actions">
           <button type="button" className="btn" onClick={handleCancel}>Cancel</button>

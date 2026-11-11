@@ -4,6 +4,7 @@ import { deleteTaxInvoice, listTaxInvoices } from '../../../services/taxInvoices
 import { formatDate, formatMoney, todayISO } from '../../../utils/invoice';
 import { CopyIcon, EditIcon, PlusIcon, SearchIcon, TrashIcon } from '../../../components/Icons';
 import DownloadPdfButton from '../../../components/DownloadPdfButton';
+import { CreatedByCell } from '../../../components/AuditInfo';
 
 // Newest invoice date first, then most recently created
 const byInvoiceDate = (a, b) =>
@@ -111,6 +112,7 @@ export default function TaxInvoiceList() {
                     <th>Bill to</th>
                     <th>PO #</th>
                     <th className="num">Amount</th>
+                    <th className="hide-sm">Created by</th>
                     <th className="actions"><span className="sr-only">Actions</span></th>
                   </tr>
                 </thead>
@@ -125,6 +127,7 @@ export default function TaxInvoiceList() {
                       <td>{inv.poCompany || '—'}</td>
                       <td>{inv.poNumber || '—'}</td>
                       <td className="num strong nowrap">{formatMoney(inv.totals?.grandTotal, inv.currency)}</td>
+                      <td className="hide-sm"><CreatedByCell record={inv} /></td>
                       <td className="actions" onClick={stop}>
                         <DownloadPdfButton iconOnly getInvoice={() => inv} />
                         <Link to={`/admin/tax-invoices/${inv.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>

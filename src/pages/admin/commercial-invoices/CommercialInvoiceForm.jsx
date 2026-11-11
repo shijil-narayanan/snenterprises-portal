@@ -24,6 +24,7 @@ import {
 import { companySnapshot, validateExportHeader } from '../../../utils/exportForm';
 import { buildCommercialPdf } from '../../../utils/invoicePdf';
 import { amountInWordsPlain, formatAmount, lineAmount } from '../../../utils/invoice';
+import { AuditLine } from '../../../components/AuditInfo';
 import {
   commercialTotal,
   emptyCommercialInvoice,
@@ -46,6 +47,8 @@ export default function CommercialInvoiceForm() {
   const formRef = useRef(null);
 
   const [form, setForm] = useState(emptyCommercialInvoice);
+
+  const [meta, setMeta] = useState(null); // who created / last updated the record
   const [savedJson, setSavedJson] = useState(null);
   const [companies, setCompanies] = useState([]);
   const [products, setProducts] = useState([]);
@@ -72,6 +75,7 @@ export default function CommercialInvoiceForm() {
         if (isEdit) {
           const inv = all.find((i) => i.id === id) || (await getCommercialInvoice(id));
           if (!inv) throw new Error('Commercial invoice not found');
+          setMeta(inv);
           const base = emptyCommercialInvoice();
           initial = { ...base, ...inv, marks: { ...base.marks, ...inv.marks }, items: inv.items?.length ? inv.items : [emptyCommercialItem()] };
           delete initial.id; delete initial.createdAt; delete initial.updatedAt; delete initial.total;
@@ -197,6 +201,7 @@ export default function CommercialInvoiceForm() {
             {isEdit ? `Edit ${form.invoiceNumber || 'Commercial Invoice'}` : copyFromId ? 'New Commercial Invoice (copy)' : 'New Commercial Invoice'}
             {isDirty && <span className="badge">Unsaved</span>}
           </h1>
+          {isEdit && <AuditLine record={meta} />}
         </div>
         <div className="page-head-actions">
           <button type="button" className="btn" onClick={handleCancel}>Cancel</button>
