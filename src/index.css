@@ -239,13 +239,16 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
 }
 
 @media print {
-  @page { size: A4; margin: 12mm; }
+  /* No page margin = no room for the browser's own header/footer (date, title, URL, page numbers).
+     The document supplies its own 12mm margin instead, repeated on every printed page. */
+  @page { size: A4; margin: 0; }
+  html, body { margin: 0; }
   .no-print, .sidebar, .banner, .flash { display: none !important; }
   body, :root { background: #fff; }
   .admin { display: block; }
   .admin-content { padding: 0; max-width: none; }
   .card { box-shadow: none; padding: 0; }
-  .paper { border: 0; box-shadow: none; padding: 0; max-width: none; margin: 0; font-size: 10.5pt; }
+  .paper { border: 0; box-shadow: none; padding: 12mm; max-width: none; margin: 0; font-size: 10.5pt; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
   .paper-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .paper-table tr { break-inside: avoid; }
   .paper-foot { break-inside: avoid; }
