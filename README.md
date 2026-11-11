@@ -69,14 +69,27 @@ Invoice date, invoice number (auto-suggested as `SNE/<FY>/<nnn>`), PO date, PO n
 currency, payment terms, line items (item, HSN, qty, rate, amount) and tax
 (CGST 9% + SGST 9%, or IGST 18%). Sub total, taxes and grand total are calculated automatically.
 
-## Deploying (later)
+## Deploying to Firebase Hosting
+
+> **Add a login to `/admin` and lock down `firestore.rules` before deploying** — otherwise anyone
+> with the site's address can read and change all data.
+
+One-time setup on your computer:
 
 ```bash
-npm run build
-npx firebase-tools deploy   # uses firebase.json (hosting serves ./dist with SPA rewrites)
+npx firebase-tools@14 login
 ```
 
-Any static host works as long as all routes fall back to `index.html`.
+Then, from the project folder (with `.env.local` in place):
+
+```bash
+npm run deploy
+```
+
+This builds the site and deploys hosting plus the Firestore rules in `firestore.rules` to the
+`sn-enterprises-portal` project (set in `.firebaserc`). The site is served at
+`https://sn-enterprises-portal.web.app`; a custom domain can be added later under
+Hosting → Add custom domain in the Firebase console.
 
 ## Project structure
 
