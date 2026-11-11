@@ -7,20 +7,20 @@ It is admin-only: every page requires sign-in. A public website, if needed, live
 
 | Path | Description |
 |------|-------------|
-| `/` | Opens the portal (redirects to `/admin`) |
 | `/login` | Sign-in page for the portal |
-| `/admin` | Portal dashboard (welcome board) — signed-in users only |
-| `/admin/tax-invoices` | Tax invoice list (search, view, edit, delete) |
-| `/admin/tax-invoices/new` | Create a tax invoice |
-| `/admin/tax-invoices/:id` | View / print a tax invoice |
-| `/admin/tax-invoices/:id/edit` | Edit a tax invoice |
-| `/admin/commercial-invoices` | Commercial (export) invoices — list, create, view/print, PDF, edit, delete |
-| `/admin/packing-lists` | Packing lists — create from a commercial invoice or from scratch, view/print, PDF, edit, delete |
-| `/admin/companies` | Companies (buyers) — list, search, add, edit, delete |
-| `/admin/products` | Products — list, search, add, edit, delete |
-| `/admin/settings` | Settings — your own company name, GSTIN, IEC, address, contact, bank account and LUT |
+| `/` | Dashboard — every page except `/login` requires sign-in |
+| `/tax-invoices` | Tax invoice list (search, view, edit, delete) |
+| `/tax-invoices/new` | Create a tax invoice |
+| `/tax-invoices/:id` | View / print a tax invoice |
+| `/tax-invoices/:id/edit` | Edit a tax invoice |
+| `/commercial-invoices` | Commercial (export) invoices — list, create, view/print, PDF, edit, delete |
+| `/packing-lists` | Packing lists — create from a commercial invoice or from scratch, view/print, PDF, edit, delete |
+| `/companies` | Companies (buyers) — list, search, add, edit, delete |
+| `/products` | Products — list, search, add, edit, delete |
+| `/settings` | Settings — your own company name, GSTIN, IEC, address, contact, bank account and LUT |
 
-> `/admin` requires sign-in (Firebase Authentication, email + password). `/login` is the sign-in page.
+> Every page requires sign-in (Firebase Authentication, email + password); `/login` is the sign-in page.
+> Old `/admin/...` links redirect to the same page without `/admin`.
 
 ## Getting started
 

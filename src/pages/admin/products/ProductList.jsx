@@ -69,7 +69,7 @@ export default function ProductList() {
           <p className="muted">Items you sell. Picked as line items on invoices, with their HSN code.</p>
         </div>
         <div className="page-head-actions">
-          <Link to="/admin/products/new" className="btn btn-primary"><PlusIcon /> New Product</Link>
+          <Link to="/products/new" className="btn btn-primary"><PlusIcon /> New Product</Link>
         </div>
       </div>
 
@@ -94,7 +94,7 @@ export default function ProductList() {
             <div className="empty-icon">📦</div>
             <h2>No products yet</h2>
             <p className="muted">Add the items you put on invoices.</p>
-            <Link to="/admin/products/new" className="btn btn-primary"><PlusIcon /> Add your first product</Link>
+            <Link to="/products/new" className="btn btn-primary"><PlusIcon /> Add your first product</Link>
           </div>
         ) : (
           <>
@@ -129,9 +129,9 @@ export default function ProductList() {
                 </thead>
                 <tbody>
                   {filtered.map((p) => (
-                    <tr key={p.id} className="row-link" onClick={() => navigate(`/admin/products/${p.id}/edit`)}>
+                    <tr key={p.id} className="row-link" onClick={() => navigate(`/products/${p.id}/edit`)}>
                       <td>
-                        <Link to={`/admin/products/${p.id}/edit`} onClick={stop} className="strong product-name">{p.name}</Link>
+                        <Link to={`/products/${p.id}/edit`} onClick={stop} className="strong product-name">{p.name}</Link>
                         {p.code && <div><span className="tag tag-gray mono">{p.code}</span></div>}
                       </td>
                       <td className="nowrap">
@@ -140,7 +140,7 @@ export default function ProductList() {
                       <td className="num hide-sm">{usage[p.id] || <span className="muted">0</span>}</td>
                       <td className="hide-sm"><CreatedByCell record={p} /></td>
                       <td className="actions" onClick={stop}>
-                        <Link to={`/admin/products/${p.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>
+                        <Link to={`/products/${p.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>
                         <button className="icon-btn icon-btn-danger" title="Delete" aria-label="Delete" onClick={() => handleDelete(p)}><TrashIcon /></button>
                       </td>
                     </tr>

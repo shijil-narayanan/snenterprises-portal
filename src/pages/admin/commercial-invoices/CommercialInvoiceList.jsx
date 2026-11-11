@@ -70,7 +70,7 @@ export default function CommercialInvoiceList() {
           <p className="muted">Export invoices under LUT, with shipping, marks and bank details.</p>
         </div>
         <div className="page-head-actions">
-          <Link to="/admin/commercial-invoices/new" className="btn btn-primary"><PlusIcon /> New Commercial Invoice</Link>
+          <Link to="/commercial-invoices/new" className="btn btn-primary"><PlusIcon /> New Commercial Invoice</Link>
         </div>
       </div>
 
@@ -91,7 +91,7 @@ export default function CommercialInvoiceList() {
             <div className="empty-icon">🚢</div>
             <h2>No commercial invoices yet</h2>
             <p className="muted">Your export invoices will appear here.</p>
-            <Link to="/admin/commercial-invoices/new" className="btn btn-primary"><PlusIcon /> Create your first commercial invoice</Link>
+            <Link to="/commercial-invoices/new" className="btn btn-primary"><PlusIcon /> Create your first commercial invoice</Link>
           </div>
         ) : (
           <>
@@ -118,9 +118,9 @@ export default function CommercialInvoiceList() {
                 </thead>
                 <tbody>
                   {filtered.map((inv) => (
-                    <tr key={inv.id} className="row-link" onClick={() => navigate(`/admin/commercial-invoices/${inv.id}`)}>
+                    <tr key={inv.id} className="row-link" onClick={() => navigate(`/commercial-invoices/${inv.id}`)}>
                       <td>
-                        <Link to={`/admin/commercial-invoices/${inv.id}`} onClick={stop} className="strong">{inv.invoiceNumber || '(no number)'}</Link>
+                        <Link to={`/commercial-invoices/${inv.id}`} onClick={stop} className="strong">{inv.invoiceNumber || '(no number)'}</Link>
                         <div className="muted small">{inv.poNumber ? `PO ${inv.poNumber}` : `${inv.items?.length || 0} item${inv.items?.length === 1 ? '' : 's'}`}</div>
                       </td>
                       <td className="nowrap">{formatDate(inv.invoiceDate)}</td>
@@ -134,14 +134,14 @@ export default function CommercialInvoiceList() {
                       <td className="actions" onClick={stop}>
                         <DownloadPdfButton iconOnly getInvoice={() => inv} download={downloadCommercialPdf} />
                         {packingByInvoice[inv.id] ? (
-                          <Link to={`/admin/packing-lists/${packingByInvoice[inv.id]}`} className="icon-btn icon-btn-done"
+                          <Link to={`/packing-lists/${packingByInvoice[inv.id]}`} className="icon-btn icon-btn-done"
                             title="View packing list" aria-label="View packing list"><BoxIcon /></Link>
                         ) : (
-                          <Link to={`/admin/packing-lists/new?invoice=${inv.id}`} className="icon-btn"
+                          <Link to={`/packing-lists/new?invoice=${inv.id}`} className="icon-btn"
                             title="Create packing list (prefilled from this invoice)" aria-label="Create packing list"><BoxIcon /></Link>
                         )}
-                        <Link to={`/admin/commercial-invoices/${inv.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>
-                        <Link to={`/admin/commercial-invoices/new?from=${inv.id}`} className="icon-btn" title="Duplicate" aria-label="Duplicate"><CopyIcon /></Link>
+                        <Link to={`/commercial-invoices/${inv.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>
+                        <Link to={`/commercial-invoices/new?from=${inv.id}`} className="icon-btn" title="Duplicate" aria-label="Duplicate"><CopyIcon /></Link>
                         <button className="icon-btn icon-btn-danger" title="Delete" aria-label="Delete" onClick={() => handleDelete(inv)}><TrashIcon /></button>
                       </td>
                     </tr>

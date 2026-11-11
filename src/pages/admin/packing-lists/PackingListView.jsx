@@ -23,7 +23,7 @@ export default function PackingListView() {
     if (!window.confirm(`Delete packing list ${list.invoiceNumber}? This cannot be undone.`)) return;
     try {
       await deletePackingList(id);
-      navigate('/admin/packing-lists', { state: { flash: `Packing list ${list.invoiceNumber} deleted` } });
+      navigate('/packing-lists', { state: { flash: `Packing list ${list.invoiceNumber} deleted` } });
     } catch (e) {
       setError(e.message);
     }
@@ -35,7 +35,7 @@ export default function PackingListView() {
     return (
       <div className="panel">
         <p>Packing list not found.</p>
-        <Link to="/admin/packing-lists">← Back to Packing Lists</Link>
+        <Link to="/packing-lists">← Back to Packing Lists</Link>
       </div>
     );
 
@@ -50,19 +50,19 @@ export default function PackingListView() {
     <>
       <div className="page-head no-print">
         <div>
-          <Link to="/admin/packing-lists" className="crumb"><ArrowLeftIcon size={14} /> Packing Lists</Link>
+          <Link to="/packing-lists" className="crumb"><ArrowLeftIcon size={14} /> Packing Lists</Link>
           <h1>Packing list {list.invoiceNumber}</h1>
           <p className="muted">
             {list.consignee?.name || 'No consignee'} · {formatDate(list.invoiceDate)} · {list.totals?.boxes || 0} boxes · {formatWeight(list.totals?.gross)} kg gross
-            {list.commercialInvoiceId && <> · <Link to={`/admin/commercial-invoices/${list.commercialInvoiceId}`}>View commercial invoice</Link></>}
+            {list.commercialInvoiceId && <> · <Link to={`/commercial-invoices/${list.commercialInvoiceId}`}>View commercial invoice</Link></>}
           </p>
           <AuditLine record={list} />
         </div>
         <div className="page-head-actions">
-          <button className="btn" onClick={() => navigate(`/admin/packing-lists/new?from=${id}`)} title="Start a new packing list with the same consignee, shipping and items">
+          <button className="btn" onClick={() => navigate(`/packing-lists/new?from=${id}`)} title="Start a new packing list with the same consignee, shipping and items">
             <CopyIcon /> Duplicate
           </button>
-          <Link to={`/admin/packing-lists/${id}/edit`} className="btn"><EditIcon /> Edit</Link>
+          <Link to={`/packing-lists/${id}/edit`} className="btn"><EditIcon /> Edit</Link>
           <button className="btn" onClick={handlePrint}><PrintIcon /> Print</button>
           <DownloadPdfButton className="btn btn-primary" getInvoice={() => list} download={downloadPackingPdf} />
           <button className="btn btn-danger-outline" onClick={handleDelete}><TrashIcon /> Delete</button>

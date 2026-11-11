@@ -73,7 +73,7 @@ export default function CompanyList() {
           <p className="muted">Customers you bill. Selected as “PO company” on invoices.</p>
         </div>
         <div className="page-head-actions">
-          <Link to="/admin/companies/new" className="btn btn-primary"><PlusIcon /> New Company</Link>
+          <Link to="/companies/new" className="btn btn-primary"><PlusIcon /> New Company</Link>
         </div>
       </div>
 
@@ -94,7 +94,7 @@ export default function CompanyList() {
             <div className="empty-icon">🏢</div>
             <h2>No companies yet</h2>
             <p className="muted">Add the customers you invoice.</p>
-            <Link to="/admin/companies/new" className="btn btn-primary"><PlusIcon /> Add your first company</Link>
+            <Link to="/companies/new" className="btn btn-primary"><PlusIcon /> Add your first company</Link>
           </div>
         ) : (
           <>
@@ -132,10 +132,10 @@ export default function CompanyList() {
                   {filtered.map((c) => {
                     const place = [c.address?.city, c.address?.state, c.address?.country].filter(Boolean).join(', ');
                     return (
-                      <tr key={c.id} className="row-link" onClick={() => navigate(`/admin/companies/${c.id}/edit`)}>
+                      <tr key={c.id} className="row-link" onClick={() => navigate(`/companies/${c.id}/edit`)}>
                         <td>
                           <div className="cell-title">
-                            <Link to={`/admin/companies/${c.id}/edit`} onClick={stop} className="strong">{c.name}</Link>
+                            <Link to={`/companies/${c.id}/edit`} onClick={stop} className="strong">{c.name}</Link>
                             <span className={`tag ${isDomestic(c) ? 'tag-blue' : 'tag-green'}`}>{isDomestic(c) ? 'Domestic' : 'Export'}</span>
                           </div>
                           <div className="muted small" title={addressLines(c.address).join(', ')}>{place || 'No address'}</div>
@@ -148,7 +148,7 @@ export default function CompanyList() {
                         <td className="num">{invoiceCounts[c.id] || <span className="muted">0</span>}</td>
                         <td className="hide-sm"><CreatedByCell record={c} /></td>
                         <td className="actions" onClick={stop}>
-                          <Link to={`/admin/companies/${c.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>
+                          <Link to={`/companies/${c.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>
                           <button className="icon-btn icon-btn-danger" title="Delete" aria-label="Delete" onClick={() => handleDelete(c)}><TrashIcon /></button>
                         </td>
                       </tr>

@@ -18,15 +18,15 @@ const readSidebarOpen = () => {
 };
 
 const tabs = [
-  { to: '/admin', label: 'Dashboard', icon: '🏠', end: true },
-  { to: '/admin/tax-invoices', label: 'Tax Invoices', icon: '🧾' },
-  { to: '/admin/commercial-invoices', label: 'Commercial Invoices', icon: '📄' },
-  { to: '/admin/packing-lists', label: 'Packing Lists', icon: '📦' },
+  { to: '/', label: 'Dashboard', icon: '🏠', end: true },
+  { to: '/tax-invoices', label: 'Tax Invoices', icon: '🧾' },
+  { to: '/commercial-invoices', label: 'Commercial Invoices', icon: '📄' },
+  { to: '/packing-lists', label: 'Packing Lists', icon: '📦' },
   { section: 'Master Data' },
-  { to: '/admin/companies', label: 'Companies', icon: '🏢' },
-  { to: '/admin/products', label: 'Products', icon: '🏷️' },
+  { to: '/companies', label: 'Companies', icon: '🏢' },
+  { to: '/products', label: 'Products', icon: '🏷️' },
   { section: 'Setup' },
-  { to: '/admin/settings', label: 'Settings', icon: '⚙️' },
+  { to: '/settings', label: 'Settings', icon: '⚙️' },
 ];
 
 export default function AdminLayout() {
@@ -58,7 +58,7 @@ export default function AdminLayout() {
     <div className={`admin${open ? '' : ' sidebar-closed'}`}>
       <aside className="sidebar no-print" aria-label="Main navigation">
         <div className="sidebar-top">
-          <Link to="/admin" className="sidebar-brand" title="SN Enterprises">
+          <Link to="/" className="sidebar-brand" title="SN Enterprises">
             <span className="brand-mark">SN</span> <span className="sidebar-text">Enterprises</span>
           </Link>
           <button type="button" className="sidebar-toggle" onClick={toggleSidebar}

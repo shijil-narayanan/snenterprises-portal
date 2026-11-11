@@ -18,8 +18,9 @@ const MESSAGES = {
 };
 const message = (e) => MESSAGES[e.code] || e.message;
 
-// Only allow redirects back into the portal
-const safeNext = (next) => (next && next.startsWith('/admin') ? next : '/admin');
+// Only allow redirects to a page inside this app (not another site, not the login page itself)
+const safeNext = (next) =>
+  next && next.startsWith('/') && !next.startsWith('//') && !next.startsWith('/login') ? next : '/';
 
 export default function Login() {
   const { user } = useAuth();

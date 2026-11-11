@@ -78,7 +78,7 @@ export default function ProductForm() {
   const update = (changes) => setForm((f) => ({ ...f, ...changes }));
 
   const handleCancel = () => {
-    if (!isDirty || window.confirm('Discard your unsaved changes?')) navigate('/admin/products');
+    if (!isDirty || window.confirm('Discard your unsaved changes?')) navigate('/products');
   };
 
   const save = async (addAnother) => {
@@ -102,11 +102,11 @@ export default function ProductForm() {
         setSavedJson(JSON.stringify(EMPTY));
         setSubmitted(false);
         setSaving(false);
-        navigate('/admin/products/new', { replace: true, state: { flash } });
+        navigate('/products/new', { replace: true, state: { flash } });
         requestAnimationFrame(() => document.querySelector('textarea')?.focus());
       } else {
         setSavedJson(JSON.stringify(form));
-        navigate('/admin/products', { state: { flash } });
+        navigate('/products', { state: { flash } });
       }
     } catch (err) {
       setError(err.message);
@@ -120,7 +120,7 @@ export default function ProductForm() {
     try {
       await productsService.remove(id);
       setSavedJson(JSON.stringify(form));
-      navigate('/admin/products', { state: { flash: 'Product deleted' } });
+      navigate('/products', { state: { flash: 'Product deleted' } });
     } catch (e) {
       setError(e.message);
     }
@@ -134,7 +134,7 @@ export default function ProductForm() {
     <form ref={formRef} onSubmit={(e) => { e.preventDefault(); save(false); }} noValidate>
       <div className="page-head">
         <div>
-          <Link to="/admin/products" className="crumb"><ArrowLeftIcon size={14} /> Products</Link>
+          <Link to="/products" className="crumb"><ArrowLeftIcon size={14} /> Products</Link>
           <h1>
             {isEdit ? 'Edit Product' : 'New Product'}
             {isDirty && <span className="badge">Unsaved</span>}

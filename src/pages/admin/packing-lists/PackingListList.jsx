@@ -60,7 +60,7 @@ export default function PackingListList() {
           <p className="muted">Packages, quantities and weights for each export shipment.</p>
         </div>
         <div className="page-head-actions">
-          <Link to="/admin/packing-lists/new" className="btn btn-primary"><PlusIcon /> New Packing List</Link>
+          <Link to="/packing-lists/new" className="btn btn-primary"><PlusIcon /> New Packing List</Link>
         </div>
       </div>
 
@@ -81,7 +81,7 @@ export default function PackingListList() {
             <div className="empty-icon">📦</div>
             <h2>No packing lists yet</h2>
             <p className="muted">Create one from scratch, or from a commercial invoice to copy its details.</p>
-            <Link to="/admin/packing-lists/new" className="btn btn-primary"><PlusIcon /> Create your first packing list</Link>
+            <Link to="/packing-lists/new" className="btn btn-primary"><PlusIcon /> Create your first packing list</Link>
           </div>
         ) : (
           <>
@@ -108,9 +108,9 @@ export default function PackingListList() {
                 </thead>
                 <tbody>
                   {filtered.map((l) => (
-                    <tr key={l.id} className="row-link" onClick={() => navigate(`/admin/packing-lists/${l.id}`)}>
+                    <tr key={l.id} className="row-link" onClick={() => navigate(`/packing-lists/${l.id}`)}>
                       <td>
-                        <Link to={`/admin/packing-lists/${l.id}`} onClick={stop} className="strong">{l.invoiceNumber || '(no number)'}</Link>
+                        <Link to={`/packing-lists/${l.id}`} onClick={stop} className="strong">{l.invoiceNumber || '(no number)'}</Link>
                         <div className="muted small">{[l.portOfDischarge, l.vesselFlight].filter(Boolean).join(' · ') || `${l.items?.length || 0} items`}</div>
                       </td>
                       <td className="nowrap">{formatDate(l.invoiceDate)}</td>
@@ -122,8 +122,8 @@ export default function PackingListList() {
                       <td className="hide-sm"><CreatedByCell record={l} /></td>
                       <td className="actions" onClick={stop}>
                         <DownloadPdfButton iconOnly getInvoice={() => l} download={downloadPackingPdf} />
-                        <Link to={`/admin/packing-lists/${l.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>
-                        <Link to={`/admin/packing-lists/new?from=${l.id}`} className="icon-btn" title="Duplicate" aria-label="Duplicate"><CopyIcon /></Link>
+                        <Link to={`/packing-lists/${l.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>
+                        <Link to={`/packing-lists/new?from=${l.id}`} className="icon-btn" title="Duplicate" aria-label="Duplicate"><CopyIcon /></Link>
                         <button className="icon-btn icon-btn-danger" title="Delete" aria-label="Delete" onClick={() => handleDelete(l)}><TrashIcon /></button>
                       </td>
                     </tr>

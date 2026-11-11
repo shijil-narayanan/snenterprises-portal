@@ -32,7 +32,7 @@ function PartyCard({ company }) {
         {company.gst && <span><strong>GSTIN</strong> {company.gst}</span>}
         {contact.map((c) => <span key={c}>{c}</span>)}
       </div>
-      {company.id && <Link to={`/admin/companies/${company.id}/edit`} target="_blank" className="buyer-edit">Edit company</Link>}
+      {company.id && <Link to={`/companies/${company.id}/edit`} target="_blank" className="buyer-edit">Edit company</Link>}
     </div>
   );
 }
@@ -110,7 +110,7 @@ export function PartiesSection({ step, form, setForm, errors, companies }) {
           placeholder={form.consignee?.name && !inList(form.consigneeId) ? `${form.consignee.name} (no longer in list — select again)` : 'Search company by name…'} />
         <FieldError message={errors.consignee} />
         <div className="field-help">
-          Not in the list? <Link to="/admin/companies/new" target="_blank">Add a new company</Link> — it appears here when you come back.
+          Not in the list? <Link to="/companies/new" target="_blank">Add a new company</Link> — it appears here when you come back.
           Shipping details below are filled from the company.
         </div>
       </div>

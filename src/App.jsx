@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AdminLayout from './components/AdminLayout';
 import Login from './pages/Login';
 import RequireAuth from './auth/RequireAuth';
@@ -18,15 +18,22 @@ import ProductList from './pages/admin/products/ProductList';
 import ProductForm from './pages/admin/products/ProductForm';
 import CompanySettings from './pages/admin/settings/CompanySettings';
 
+/** /admin/tax-invoices/123 -> /tax-invoices/123 (keeps any ?query) */
+function LegacyAdminRedirect() {
+  const { pathname, search } = useLocation();
+  return <Navigate to={(pathname.replace(/^\/admin/, '') || '/') + search} replace />;
+}
+
 export default function App() {
   return (
     <Routes>
-      {/* Admin-only app: the root opens the dashboard (sign-in first if needed) */}
-      <Route index element={<Navigate to="/admin" replace />} />
       <Route path="login" element={<Login />} />
 
-      {/* Admin pages: signed-in users only */}
-      <Route path="admin" element={<RequireAuth><AdminLayout /></RequireAuth>}>
+      {/* Old /admin/... links (bookmarks, shared links) go to the same page without /admin */}
+      <Route path="admin/*" element={<LegacyAdminRedirect />} />
+
+      {/* Everything else: signed-in users only. "/" is the dashboard. */}
+      <Route path="/" element={<RequireAuth><AdminLayout /></RequireAuth>}>
         <Route index element={<Dashboard />} />
         <Route path="tax-invoices" element={<TaxInvoiceList />} />
         <Route path="tax-invoices/new" element={<TaxInvoiceForm />} />
@@ -49,7 +56,7 @@ export default function App() {
         <Route path="settings" element={<CompanySettings />} />
       </Route>
 
-      <Route path="*" element={<Navigate to="/admin" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

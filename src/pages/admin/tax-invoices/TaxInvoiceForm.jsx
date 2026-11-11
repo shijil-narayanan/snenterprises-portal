@@ -197,7 +197,7 @@ export default function TaxInvoiceForm() {
   }));
   const filterProduct = (opt, input) => opt.data.searchText.includes(input.toLowerCase());
 
-  const backTo = isEdit ? `/admin/tax-invoices/${id}` : '/admin/tax-invoices';
+  const backTo = isEdit ? `/tax-invoices/${id}` : '/tax-invoices';
   const handleCancel = () => {
     if (!isDirty || window.confirm('Discard your unsaved changes?')) navigate(backTo);
   };
@@ -241,7 +241,7 @@ export default function TaxInvoiceForm() {
       const data = buildInvoice();
       const savedId = isEdit ? (await updateTaxInvoice(id, data), id) : await createTaxInvoice(data);
       setSavedJson(JSON.stringify(form));
-      navigate(`/admin/tax-invoices/${savedId}`, { state: { flash: isEdit ? 'Invoice updated' : 'Invoice created' } });
+      navigate(`/tax-invoices/${savedId}`, { state: { flash: isEdit ? 'Invoice updated' : 'Invoice created' } });
     } catch (err) {
       setSaveError(err.message);
       setSaving(false);
@@ -257,7 +257,7 @@ export default function TaxInvoiceForm() {
     <form ref={formRef} className="inv-form" onSubmit={handleSubmit} noValidate>
       <div className="page-head">
         <div>
-          <Link to="/admin/tax-invoices" className="crumb"><ArrowLeftIcon size={14} /> Tax Invoices</Link>
+          <Link to="/tax-invoices" className="crumb"><ArrowLeftIcon size={14} /> Tax Invoices</Link>
           <h1>
             {isEdit ? `Edit ${form.invoiceNumber || 'Tax Invoice'}` : copyFromId ? 'New Tax Invoice (copy)' : 'New Tax Invoice'}
             {isDirty && <span className="badge">Unsaved</span>}
@@ -318,7 +318,7 @@ export default function TaxInvoiceForm() {
               />
               <FieldError message={errors.poCompany} />
               <div className="field-help">
-                Not in the list? <Link to="/admin/companies/new" target="_blank">Add a new company</Link> — it appears here when you come back.
+                Not in the list? <Link to="/companies/new" target="_blank">Add a new company</Link> — it appears here when you come back.
               </div>
             </div>
 
@@ -333,7 +333,7 @@ export default function TaxInvoiceForm() {
                   {buyer.email && <span>{buyer.email}</span>}
                   {(buyer.mobile || buyer.phone) && <span>{buyer.mobile || buyer.phone}</span>}
                 </div>
-                {company && <Link to={`/admin/companies/${company.id}/edit`} target="_blank" className="buyer-edit">Edit company</Link>}
+                {company && <Link to={`/companies/${company.id}/edit`} target="_blank" className="buyer-edit">Edit company</Link>}
               </div>
             )}
 
@@ -411,7 +411,7 @@ export default function TaxInvoiceForm() {
             <FieldError message={errors.items} />
             <button type="button" className="add-row" onClick={addItem}><PlusIcon /> Add item</button>
             <div className="field-help">
-              Product missing? <Link to="/admin/products/new" target="_blank">Add a new product</Link>.
+              Product missing? <Link to="/products/new" target="_blank">Add a new product</Link>.
             </div>
           </section>
         </div>

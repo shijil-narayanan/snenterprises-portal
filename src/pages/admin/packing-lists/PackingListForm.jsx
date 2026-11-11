@@ -232,7 +232,7 @@ export default function PackingListForm() {
   const openPreview = () => { if (checkValid()) setPreviewList(buildList()); };
   const closePreview = useCallback(() => setPreviewList(null), []);
 
-  const backTo = isEdit ? `/admin/packing-lists/${id}` : '/admin/packing-lists';
+  const backTo = isEdit ? `/packing-lists/${id}` : '/packing-lists';
   const handleCancel = () => { if (!isDirty || window.confirm('Discard your unsaved changes?')) navigate(backTo); };
 
   const handleSubmit = async (e) => {
@@ -244,7 +244,7 @@ export default function PackingListForm() {
       const data = buildList();
       const savedId = isEdit ? (await updatePackingList(id, data), id) : await createPackingList(data);
       setSavedJson(JSON.stringify(form));
-      navigate(`/admin/packing-lists/${savedId}`, { state: { flash: isEdit ? 'Packing list updated' : 'Packing list created' } });
+      navigate(`/packing-lists/${savedId}`, { state: { flash: isEdit ? 'Packing list updated' : 'Packing list created' } });
     } catch (err) {
       setSaveError(err.message);
       setSaving(false);
@@ -262,7 +262,7 @@ export default function PackingListForm() {
     <form ref={formRef} className="inv-form" onSubmit={handleSubmit} noValidate>
       <div className="page-head">
         <div>
-          <Link to="/admin/packing-lists" className="crumb"><ArrowLeftIcon size={14} /> Packing Lists</Link>
+          <Link to="/packing-lists" className="crumb"><ArrowLeftIcon size={14} /> Packing Lists</Link>
           <h1>
             {isEdit ? `Edit packing list ${form.invoiceNumber}` : 'New Packing List'}
             {isDirty && <span className="badge">Unsaved</span>}
@@ -302,7 +302,7 @@ export default function PackingListForm() {
           )}
 
           <InvoiceDetailsSection step={step(1)} form={form} setForm={setForm} errors={errors}
-            numberHelp={linkedInvoice ? <>Linked to commercial invoice <Link to={`/admin/commercial-invoices/${linkedInvoice.id}`} target="_blank">{linkedInvoice.invoiceNumber}</Link></> : 'The commercial invoice number this packing list belongs to.'} />
+            numberHelp={linkedInvoice ? <>Linked to commercial invoice <Link to={`/commercial-invoices/${linkedInvoice.id}`} target="_blank">{linkedInvoice.invoiceNumber}</Link></> : 'The commercial invoice number this packing list belongs to.'} />
           <PartiesSection step={step(2)} form={form} setForm={setForm} errors={errors} companies={companies} />
           <ShippingSection step={step(3)} form={form} setForm={setForm} />
 
@@ -398,7 +398,7 @@ export default function PackingListForm() {
               <div className="totals-row grand"><span>Gross weight</span><span>{formatWeight(totals.gross)} kg</span></div>
             </div>
             {linkedInvoice && (
-              <p className="field-help usage">From commercial invoice <Link to={`/admin/commercial-invoices/${linkedInvoice.id}`} target="_blank">{linkedInvoice.invoiceNumber}</Link>.</p>
+              <p className="field-help usage">From commercial invoice <Link to={`/commercial-invoices/${linkedInvoice.id}`} target="_blank">{linkedInvoice.invoiceNumber}</Link>.</p>
             )}
             <button type="submit" className="btn btn-primary btn-block" disabled={saving}>{saveLabel}</button>
             <button type="button" className="btn btn-block btn-secondary-block" onClick={openPreview}><FileIcon /> Preview PDF</button>

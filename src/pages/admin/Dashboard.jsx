@@ -35,34 +35,34 @@ export default function Dashboard() {
         <div className="card stat">
           <div className="stat-label">Tax Invoices</div>
           <div className="stat-value">{invoices ? invoices.length : '…'}</div>
-          <Link to="/admin/tax-invoices">View all →</Link>
+          <Link to="/tax-invoices">View all →</Link>
         </div>
         <div className="card stat">
           <div className="stat-label">Commercial Invoices</div>
           <div className="stat-value">{counts.commercial ?? '…'}</div>
-          <Link to="/admin/commercial-invoices">View all →</Link>
+          <Link to="/commercial-invoices">View all →</Link>
         </div>
         <div className="card stat">
           <div className="stat-label">Packing Lists</div>
           <div className="stat-value">{counts.packing ?? '…'}</div>
-          <Link to="/admin/packing-lists">View all →</Link>
+          <Link to="/packing-lists">View all →</Link>
         </div>
         <div className="card stat">
           <div className="stat-label">Companies</div>
           <div className="stat-value">{counts.companies ?? '…'}</div>
-          <Link to="/admin/companies">Manage →</Link>
+          <Link to="/companies">Manage →</Link>
         </div>
         <div className="card stat">
           <div className="stat-label">Products</div>
           <div className="stat-value">{counts.products ?? '…'}</div>
-          <Link to="/admin/products">Manage →</Link>
+          <Link to="/products">Manage →</Link>
         </div>
       </div>
 
       <div className="card">
         <div className="card-header">
           <h2>Recent tax invoices</h2>
-          <Link to="/admin/tax-invoices/new" className="btn btn-primary btn-sm">+ New Tax Invoice</Link>
+          <Link to="/tax-invoices/new" className="btn btn-primary btn-sm">+ New Tax Invoice</Link>
         </div>
         {invoices && recent.length === 0 && <p className="muted">No invoices yet.</p>}
         {recent.length > 0 && (
@@ -73,7 +73,7 @@ export default function Dashboard() {
             <tbody>
               {recent.map((inv) => (
                 <tr key={inv.id}>
-                  <td><Link to={`/admin/tax-invoices/${inv.id}`}>{inv.invoiceNumber || '(no number)'}</Link></td>
+                  <td><Link to={`/tax-invoices/${inv.id}`}>{inv.invoiceNumber || '(no number)'}</Link></td>
                   <td>{formatDate(inv.invoiceDate)}</td>
                   <td>{inv.poCompany || '—'}</td>
                   <td className="num">{formatMoney(inv.totals?.grandTotal, inv.currency)}</td>

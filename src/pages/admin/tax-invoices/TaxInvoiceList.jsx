@@ -65,7 +65,7 @@ export default function TaxInvoiceList() {
           <p className="muted">Create, view and print GST tax invoices.</p>
         </div>
         <div className="page-head-actions">
-          <Link to="/admin/tax-invoices/new" className="btn btn-primary"><PlusIcon /> New Tax Invoice</Link>
+          <Link to="/tax-invoices/new" className="btn btn-primary"><PlusIcon /> New Tax Invoice</Link>
         </div>
       </div>
 
@@ -86,7 +86,7 @@ export default function TaxInvoiceList() {
             <div className="empty-icon">🧾</div>
             <h2>No tax invoices yet</h2>
             <p className="muted">Your invoices will appear here.</p>
-            <Link to="/admin/tax-invoices/new" className="btn btn-primary"><PlusIcon /> Create your first invoice</Link>
+            <Link to="/tax-invoices/new" className="btn btn-primary"><PlusIcon /> Create your first invoice</Link>
           </div>
         ) : (
           <>
@@ -118,9 +118,9 @@ export default function TaxInvoiceList() {
                 </thead>
                 <tbody>
                   {filtered.map((inv) => (
-                    <tr key={inv.id} onClick={() => navigate(`/admin/tax-invoices/${inv.id}`)} className="row-link">
+                    <tr key={inv.id} onClick={() => navigate(`/tax-invoices/${inv.id}`)} className="row-link">
                       <td>
-                        <Link to={`/admin/tax-invoices/${inv.id}`} onClick={stop} className="strong">{inv.invoiceNumber || '(no number)'}</Link>
+                        <Link to={`/tax-invoices/${inv.id}`} onClick={stop} className="strong">{inv.invoiceNumber || '(no number)'}</Link>
                         <div className="muted small">{inv.items?.length || 0} item{inv.items?.length === 1 ? '' : 's'}</div>
                       </td>
                       <td className="nowrap">{formatDate(inv.invoiceDate)}</td>
@@ -130,8 +130,8 @@ export default function TaxInvoiceList() {
                       <td className="hide-sm"><CreatedByCell record={inv} /></td>
                       <td className="actions" onClick={stop}>
                         <DownloadPdfButton iconOnly getInvoice={() => inv} />
-                        <Link to={`/admin/tax-invoices/${inv.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>
-                        <Link to={`/admin/tax-invoices/new?from=${inv.id}`} className="icon-btn" title="Duplicate" aria-label="Duplicate"><CopyIcon /></Link>
+                        <Link to={`/tax-invoices/${inv.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>
+                        <Link to={`/tax-invoices/new?from=${inv.id}`} className="icon-btn" title="Duplicate" aria-label="Duplicate"><CopyIcon /></Link>
                         <button className="icon-btn icon-btn-danger" title="Delete" aria-label="Delete" onClick={() => handleDelete(inv)}><TrashIcon /></button>
                       </td>
                     </tr>

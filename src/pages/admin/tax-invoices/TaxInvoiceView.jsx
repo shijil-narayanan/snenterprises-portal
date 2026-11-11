@@ -21,7 +21,7 @@ export default function TaxInvoiceView() {
     if (!window.confirm(`Delete tax invoice ${invoice.invoiceNumber}? This cannot be undone.`)) return;
     try {
       await deleteTaxInvoice(id);
-      navigate('/admin/tax-invoices', { state: { flash: `Invoice ${invoice.invoiceNumber} deleted` } });
+      navigate('/tax-invoices', { state: { flash: `Invoice ${invoice.invoiceNumber} deleted` } });
     } catch (e) {
       setError(e.message);
     }
@@ -33,7 +33,7 @@ export default function TaxInvoiceView() {
     return (
       <div className="panel">
         <p>Invoice not found.</p>
-        <Link to="/admin/tax-invoices">← Back to Tax Invoices</Link>
+        <Link to="/tax-invoices">← Back to Tax Invoices</Link>
       </div>
     );
 
@@ -51,7 +51,7 @@ export default function TaxInvoiceView() {
     <>
       <div className="page-head no-print">
         <div>
-          <Link to="/admin/tax-invoices" className="crumb"><ArrowLeftIcon size={14} /> Tax Invoices</Link>
+          <Link to="/tax-invoices" className="crumb"><ArrowLeftIcon size={14} /> Tax Invoices</Link>
           <h1>{invoice.invoiceNumber}</h1>
           <p className="muted">
             {invoice.poCompany || 'No company'} · {formatDate(invoice.invoiceDate)} · {formatMoney(totals.grandTotal, invoice.currency)}
@@ -59,10 +59,10 @@ export default function TaxInvoiceView() {
           <AuditLine record={invoice} />
         </div>
         <div className="page-head-actions">
-          <button className="btn" onClick={() => navigate(`/admin/tax-invoices/new?from=${id}`)} title="Start a new invoice with the same buyer and items">
+          <button className="btn" onClick={() => navigate(`/tax-invoices/new?from=${id}`)} title="Start a new invoice with the same buyer and items">
             <CopyIcon /> Duplicate
           </button>
-          <Link to={`/admin/tax-invoices/${id}/edit`} className="btn"><EditIcon /> Edit</Link>
+          <Link to={`/tax-invoices/${id}/edit`} className="btn"><EditIcon /> Edit</Link>
           <button className="btn" onClick={handlePrint}><PrintIcon /> Print</button>
           <DownloadPdfButton className="btn btn-primary" getInvoice={() => invoice} />
           <button className="btn btn-danger-outline" onClick={handleDelete} title="Delete invoice"><TrashIcon /> Delete</button>

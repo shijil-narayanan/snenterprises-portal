@@ -171,7 +171,7 @@ export default function CommercialInvoiceForm() {
   const openPreview = () => { if (checkValid()) setPreviewInvoice(buildInvoice()); };
   const closePreview = useCallback(() => setPreviewInvoice(null), []);
 
-  const backTo = isEdit ? `/admin/commercial-invoices/${id}` : '/admin/commercial-invoices';
+  const backTo = isEdit ? `/commercial-invoices/${id}` : '/commercial-invoices';
   const handleCancel = () => { if (!isDirty || window.confirm('Discard your unsaved changes?')) navigate(backTo); };
 
   const handleSubmit = async (e) => {
@@ -183,7 +183,7 @@ export default function CommercialInvoiceForm() {
       const data = buildInvoice();
       const savedId = isEdit ? (await updateCommercialInvoice(id, data), id) : await createCommercialInvoice(data);
       setSavedJson(JSON.stringify(form));
-      navigate(`/admin/commercial-invoices/${savedId}`, { state: { flash: isEdit ? 'Commercial invoice updated' : 'Commercial invoice created' } });
+      navigate(`/commercial-invoices/${savedId}`, { state: { flash: isEdit ? 'Commercial invoice updated' : 'Commercial invoice created' } });
     } catch (err) {
       setSaveError(err.message);
       setSaving(false);
@@ -200,7 +200,7 @@ export default function CommercialInvoiceForm() {
     <form ref={formRef} className="inv-form" onSubmit={handleSubmit} noValidate>
       <div className="page-head">
         <div>
-          <Link to="/admin/commercial-invoices" className="crumb"><ArrowLeftIcon size={14} /> Commercial Invoices</Link>
+          <Link to="/commercial-invoices" className="crumb"><ArrowLeftIcon size={14} /> Commercial Invoices</Link>
           <h1>
             {isEdit ? `Edit ${form.invoiceNumber || 'Commercial Invoice'}` : copyFromId ? 'New Commercial Invoice (copy)' : 'New Commercial Invoice'}
             {isDirty && <span className="badge">Unsaved</span>}

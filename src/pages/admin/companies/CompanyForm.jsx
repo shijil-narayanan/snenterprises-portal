@@ -102,7 +102,7 @@ export default function CompanyForm() {
     : 'Leave empty for export customers.';
 
   const handleCancel = () => {
-    if (!isDirty || window.confirm('Discard your unsaved changes?')) navigate('/admin/companies');
+    if (!isDirty || window.confirm('Discard your unsaved changes?')) navigate('/companies');
   };
 
   const save = async (addAnother) => {
@@ -126,11 +126,11 @@ export default function CompanyForm() {
         setSavedJson(JSON.stringify(blank));
         setSubmitted(false);
         setSaving(false);
-        navigate('/admin/companies/new', { replace: true, state: { flash } });
+        navigate('/companies/new', { replace: true, state: { flash } });
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         setSavedJson(JSON.stringify(form));
-        navigate('/admin/companies', { state: { flash } });
+        navigate('/companies', { state: { flash } });
       }
     } catch (err) {
       setError(err.message);
@@ -144,7 +144,7 @@ export default function CompanyForm() {
     try {
       await companiesService.remove(id);
       setSavedJson(JSON.stringify(form));
-      navigate('/admin/companies', { state: { flash: `${form.name} deleted` } });
+      navigate('/companies', { state: { flash: `${form.name} deleted` } });
     } catch (e) {
       setError(e.message);
     }
@@ -160,7 +160,7 @@ export default function CompanyForm() {
     <form ref={formRef} onSubmit={(e) => { e.preventDefault(); save(false); }} noValidate>
       <div className="page-head">
         <div>
-          <Link to="/admin/companies" className="crumb"><ArrowLeftIcon size={14} /> Companies</Link>
+          <Link to="/companies" className="crumb"><ArrowLeftIcon size={14} /> Companies</Link>
           <h1>
             {isEdit ? form.name || 'Edit Company' : 'New Company'}
             {isDirty && <span className="badge">Unsaved</span>}

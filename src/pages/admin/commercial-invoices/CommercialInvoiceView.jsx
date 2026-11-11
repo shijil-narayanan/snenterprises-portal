@@ -28,7 +28,7 @@ export default function CommercialInvoiceView() {
     if (!window.confirm(`Delete commercial invoice ${invoice.invoiceNumber}? This cannot be undone.`)) return;
     try {
       await deleteCommercialInvoice(id);
-      navigate('/admin/commercial-invoices', { state: { flash: `Invoice ${invoice.invoiceNumber} deleted` } });
+      navigate('/commercial-invoices', { state: { flash: `Invoice ${invoice.invoiceNumber} deleted` } });
     } catch (e) {
       setError(e.message);
     }
@@ -40,7 +40,7 @@ export default function CommercialInvoiceView() {
     return (
       <div className="panel">
         <p>Commercial invoice not found.</p>
-        <Link to="/admin/commercial-invoices">← Back to Commercial Invoices</Link>
+        <Link to="/commercial-invoices">← Back to Commercial Invoices</Link>
       </div>
     );
 
@@ -55,7 +55,7 @@ export default function CommercialInvoiceView() {
     <>
       <div className="page-head no-print">
         <div>
-          <Link to="/admin/commercial-invoices" className="crumb"><ArrowLeftIcon size={14} /> Commercial Invoices</Link>
+          <Link to="/commercial-invoices" className="crumb"><ArrowLeftIcon size={14} /> Commercial Invoices</Link>
           <h1>{invoice.invoiceNumber}</h1>
           <p className="muted">
             {invoice.consignee?.name || 'No consignee'} · {formatDate(invoice.invoiceDate)} · {formatMoney(invoice.total, invoice.currency)}
@@ -63,17 +63,17 @@ export default function CommercialInvoiceView() {
           <AuditLine record={invoice} />
         </div>
         <div className="page-head-actions">
-          <button className="btn" onClick={() => navigate(`/admin/commercial-invoices/new?from=${id}`)} title="Start a new invoice with the same consignee, shipping and items">
+          <button className="btn" onClick={() => navigate(`/commercial-invoices/new?from=${id}`)} title="Start a new invoice with the same consignee, shipping and items">
             <CopyIcon /> Duplicate
           </button>
           {packingList ? (
-            <Link to={`/admin/packing-lists/${packingList.id}`} className="btn"><BoxIcon /> View packing list</Link>
+            <Link to={`/packing-lists/${packingList.id}`} className="btn"><BoxIcon /> View packing list</Link>
           ) : (
-            <Link to={`/admin/packing-lists/new?invoice=${id}`} className="btn btn-accent" title="Opens a packing list prefilled with this invoice's details">
+            <Link to={`/packing-lists/new?invoice=${id}`} className="btn btn-accent" title="Opens a packing list prefilled with this invoice's details">
               <BoxIcon /> Create packing list
             </Link>
           )}
-          <Link to={`/admin/commercial-invoices/${id}/edit`} className="btn"><EditIcon /> Edit</Link>
+          <Link to={`/commercial-invoices/${id}/edit`} className="btn"><EditIcon /> Edit</Link>
           <button className="btn" onClick={handlePrint}><PrintIcon /> Print</button>
           <DownloadPdfButton className="btn btn-primary" getInvoice={() => invoice} download={downloadCommercialPdf} />
           <button className="btn btn-danger-outline" onClick={handleDelete}><TrashIcon /> Delete</button>
