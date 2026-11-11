@@ -100,13 +100,13 @@ export const formatQty = (v) => num(v).toLocaleString('en-US', { maximumFraction
 
 /**
  * A new packing list prefilled from a commercial invoice: same parties, shipping, marks,
- * terms and items (one packing row per item holding its full quantity, weights to fill in).
+ * terms, notes and items (one packing row per item holding its full quantity, weights to fill in).
  */
 export function packingListFromCommercial(ci) {
   const base = emptyPackingList();
   const keep = ['invoiceNumber', 'invoiceDate', 'poNumber', 'poDate', 'consigneeId', 'consignee', 'buyerSameAsConsignee',
     'buyerId', 'buyer', 'origin', 'destination', 'vesselFlight', 'originPort', 'portOfDischarge', 'destinationPort',
-    'deliveryTerms', 'lut'];
+    'deliveryTerms', 'lut', 'notes'];
   const result = { ...base, commercialInvoiceId: ci.id || '' };
   keep.forEach((k) => { if (ci[k] !== undefined && ci[k] !== null) result[k] = ci[k]; });
   result.marks = { ...base.marks, ...ci.marks };

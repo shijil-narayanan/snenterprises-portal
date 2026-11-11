@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { deleteCommercialInvoice, listCommercialInvoices } from '../../../services/commercialInvoices';
+import { listPackingLists } from '../../../services/packingLists';
 import { formatDate, formatMoney, todayISO } from '../../../utils/invoice';
 import { downloadCommercialPdf } from '../../../utils/invoicePdf';
-import { CopyIcon, EditIcon, PlusIcon, SearchIcon, TrashIcon } from '../../../components/Icons';
+import { BoxIcon, CopyIcon, EditIcon, PlusIcon, SearchIcon, TrashIcon } from '../../../components/Icons';
 import DownloadPdfButton from '../../../components/DownloadPdfButton';
 
 const byInvoiceDate = (a, b) =>
@@ -21,12 +22,17 @@ export default function CommercialInvoiceList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
+  // commercial invoice id -> its packing list id
+  const [packingByInvoice, setPackingByInvoice] = useState({});
 
   useEffect(() => {
     listCommercialInvoices()
       .then((list) => setInvoices([...list].sort(byInvoiceDate)))
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
+    listPackingLists()
+      .then((lists) => setPackingByInvoice(Object.fromEntries(lists.filter((l) => l.commercialInvoiceId).map((l) => [l.commercialInvoiceId, l.id]))))
+      .catch(() => {});
   }, []);
 
   const filtered = useMemo(() => {
@@ -124,6 +130,13 @@ export default function CommercialInvoiceList() {
                       <td className="num strong nowrap">{formatMoney(inv.total, inv.currency)}</td>
                       <td className="actions" onClick={stop}>
                         <DownloadPdfButton iconOnly getInvoice={() => inv} download={downloadCommercialPdf} />
+                        {packingByInvoice[inv.id] ? (
+                          <Link to={`/admin/packing-lists/${packingByInvoice[inv.id]}`} className="icon-btn icon-btn-done"
+                            title="View packing list" aria-label="View packing list"><BoxIcon /></Link>
+                        ) : (
+                          <Link to={`/admin/packing-lists/new?invoice=${inv.id}`} className="icon-btn"
+                            title="Create packing list (prefilled from this invoice)" aria-label="Create packing list"><BoxIcon /></Link>
+                        )}
                         <Link to={`/admin/commercial-invoices/${inv.id}/edit`} className="icon-btn" title="Edit" aria-label="Edit"><EditIcon /></Link>
                         <Link to={`/admin/commercial-invoices/new?from=${inv.id}`} className="icon-btn" title="Duplicate" aria-label="Duplicate"><CopyIcon /></Link>
                         <button className="icon-btn icon-btn-danger" title="Delete" aria-label="Delete" onClick={() => handleDelete(inv)}><TrashIcon /></button>

@@ -70,6 +70,8 @@ export default function PackingListForm() {
   const [loadError, setLoadError] = useState('');
   const [saveError, setSaveError] = useState('');
   const [previewList, setPreviewList] = useState(null);
+  // Set when the form was filled from a commercial invoice: shows the banner and jumps to the boxes
+  const [prefilledFrom, setPrefilledFrom] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -92,7 +94,9 @@ export default function PackingListForm() {
           ['id', 'createdAt', 'updatedAt', 'totals', 'packages'].forEach((k) => delete initial[k]);
           initial.items = initial.items.map(({ productId, description, hsnCode, unit, packing }) => ({ productId, description, hsnCode, unit, packing }));
         } else if (fromInvoiceId && ciList.find((c) => c.id === fromInvoiceId)) {
-          initial = packingListFromCommercial(ciList.find((c) => c.id === fromInvoiceId));
+          const ci = ciList.find((c) => c.id === fromInvoiceId);
+          initial = packingListFromCommercial(ci);
+          setPrefilledFrom(ci);
         } else {
           initial = { ...emptyPackingList(), invoiceNumber: suggestCommercialNumber(ciList) };
           const src = copyFromId && lists.find((l) => l.id === copyFromId);
@@ -165,7 +169,19 @@ export default function PackingListForm() {
     if (isDirty && !window.confirm('Replace what you have entered with the details of this commercial invoice?')) return;
     setForm(packingListFromCommercial(ci));
     setSubmitted(false);
+    setPrefilledFrom(ci);
   };
+
+  // After prefilling, take the user straight to the first Boxes field
+  useEffect(() => {
+    if (!prefilledFrom || loading) return;
+    requestAnimationFrame(() => {
+      document.querySelector('#packing-items')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const boxes = document.querySelector('#packing-items [aria-label="Boxes"]');
+      boxes?.focus({ preventScroll: true });
+      boxes?.select();
+    });
+  }, [prefilledFrom, loading]);
 
   // ---------- Derived ----------
   const ranged = withPackageRanges(form.items);
@@ -232,7 +248,7 @@ export default function PackingListForm() {
 
   const saveLabel = saving ? 'Saving…' : isEdit ? 'Update Packing List' : 'Save Packing List';
   const ciOptions = invoices.map((ci) => ({ value: ci.id, label: ciLabel(ci) }));
-  const step = (n) => (isEdit ? n : n + 1);
+  const step = (n) => (isEdit || prefilledFrom ? n : n + 1);
 
   return (
     <form ref={formRef} className="inv-form" onSubmit={handleSubmit} noValidate>
@@ -252,10 +268,17 @@ export default function PackingListForm() {
       </div>
 
       {saveError && <div className="alert alert-error">Could not save: {saveError}</div>}
+      {prefilledFrom && !isEdit && (
+        <div className="alert alert-success prefill-banner">
+          <strong>Prefilled from commercial invoice {prefilledFrom.invoiceNumber}.</strong>{' '}
+          Consignee, PO, shipping, items, marks, terms and notes are copied — just add the boxes and weights for each item below.
+          <a href="#packing-items" className="prefill-jump">Go to box details ↓</a>
+        </div>
+      )}
 
       <div className="inv-layout">
         <div className="inv-main">
-          {!isEdit && (
+          {!isEdit && !prefilledFrom && (
             <section className="panel panel-accent">
               <h2 className="panel-title"><span className="step">1</span> Start from a commercial invoice <em className="optional">optional</em></h2>
               <div className="field">
@@ -263,7 +286,7 @@ export default function PackingListForm() {
                   onChange={startFromInvoice} isClearable={false}
                   placeholder={invoices.length ? 'Search by invoice number or consignee…' : 'No commercial invoices yet'} />
                 <div className="field-help">
-                  Copies the consignee, PO, shipping, items, marks and terms. Then just enter boxes and weights.
+                  Copies the consignee, PO, shipping, items, marks, terms and notes. Then just enter boxes and weights.
                 </div>
               </div>
             </section>
@@ -275,7 +298,7 @@ export default function PackingListForm() {
           <ShippingSection step={step(3)} form={form} setForm={setForm} />
 
           {/* Items & packing */}
-          <section className="panel">
+          <section className={`panel${prefilledFrom ? ' panel-highlight' : ''}`} id="packing-items">
             <h2 className="panel-title"><span className="step">{step(4)}</span> Items &amp; packing</h2>
             <datalist id="unit-options">{UNITS.map((u) => <option key={u} value={u} />)}</datalist>
             <div className="pl-form-items">

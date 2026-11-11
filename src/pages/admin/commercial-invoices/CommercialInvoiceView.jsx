@@ -6,7 +6,7 @@ import { formatDate, formatMoney } from '../../../utils/invoice';
 import { commercialPdfFileName, downloadCommercialPdf } from '../../../utils/invoicePdf';
 import CommercialInvoiceDocument from '../../../components/CommercialInvoiceDocument';
 import DownloadPdfButton from '../../../components/DownloadPdfButton';
-import { ArrowLeftIcon, CopyIcon, EditIcon, FileIcon, PrintIcon, TrashIcon } from '../../../components/Icons';
+import { ArrowLeftIcon, BoxIcon, CopyIcon, EditIcon, PrintIcon, TrashIcon } from '../../../components/Icons';
 
 export default function CommercialInvoiceView() {
   const { id } = useParams();
@@ -65,10 +65,10 @@ export default function CommercialInvoiceView() {
             <CopyIcon /> Duplicate
           </button>
           {packingList ? (
-            <Link to={`/admin/packing-lists/${packingList.id}`} className="btn"><FileIcon /> View packing list</Link>
+            <Link to={`/admin/packing-lists/${packingList.id}`} className="btn"><BoxIcon /> View packing list</Link>
           ) : (
-            <Link to={`/admin/packing-lists/new?invoice=${id}`} className="btn" title="New packing list with this invoice's details">
-              <FileIcon /> Create packing list
+            <Link to={`/admin/packing-lists/new?invoice=${id}`} className="btn btn-accent" title="Opens a packing list prefilled with this invoice's details">
+              <BoxIcon /> Create packing list
             </Link>
           )}
           <Link to={`/admin/commercial-invoices/${id}/edit`} className="btn"><EditIcon /> Edit</Link>

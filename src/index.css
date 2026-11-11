@@ -489,3 +489,12 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
   .pl-item-summary { grid-column: 1 / -1; align-items: flex-start; }
   .pl-row-hint { display: none; }
 }
+
+/* Packing list from a commercial invoice */
+.btn-accent { background: #e8f0fe; border-color: #9ec0f7; color: var(--blue); font-weight: 600; }
+.btn-accent:hover { background: #dbe7fd; }
+.icon-btn-done { color: #17663a; }
+.alert-success { background: #e7f6ec; color: #14532d; border: 1px solid #b7e1c4; }
+.prefill-banner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+.prefill-jump { margin-left: auto; font-weight: 600; white-space: nowrap; color: #17663a; }
+.panel-highlight { border-color: #9ec0f7; box-shadow: 0 0 0 3px #e8f0fe; scroll-margin-top: 16px; }
