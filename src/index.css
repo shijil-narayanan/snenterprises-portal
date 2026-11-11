@@ -58,28 +58,11 @@ textarea.input { resize: vertical; }
 .form-section legend { font-weight: 700; color: var(--blue); margin-bottom: 12px; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.03em; }
 .sidebar-section { color: #7f93b2; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 16px 12px 4px; }
 
-/* Public site */
-.public { min-height: 100vh; display: flex; flex-direction: column; }
-.public main { flex: 1; }
-.public-header { background: #fff; border-bottom: 1px solid var(--border); }
-.public-header-inner { display: flex; justify-content: space-between; align-items: center; min-height: 64px; flex-wrap: wrap; gap: 8px; }
-.brand { font-weight: 700; font-size: 1.2rem; color: var(--text); display: flex; align-items: center; gap: 8px; }
-.brand-mark { background: var(--blue); color: #fff; border-radius: 6px; padding: 2px 8px; font-weight: 700; }
-.public-nav { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-.public-nav a:not(.btn) { color: var(--text); }
-.public-nav a.active:not(.btn) { color: var(--blue); font-weight: 600; }
-.hero { background: linear-gradient(135deg, var(--blue), var(--blue-600)); color: #fff; padding: 96px 0; }
-.hero h1 { font-size: 2.6rem; }
-.lead { font-size: 1.2rem; opacity: 0.9; }
-.hero-actions { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
-.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-.prose { max-width: 800px; }
-.public-footer { background: #1f2933; color: #cbd2d9; padding: 20px 0; font-size: 0.9rem; }
-
 /* Admin */
 .admin { display: flex; min-height: 100vh; }
 .sidebar { width: 240px; flex-shrink: 0; background: #0f2747; color: #fff; display: flex; flex-direction: column; padding: 20px 12px; position: sticky; top: 0; height: 100vh; }
 .sidebar-brand { color: #fff; font-weight: 700; font-size: 1.15rem; display: flex; gap: 8px; align-items: center; padding: 0 8px 20px; }
+.brand-mark { background: var(--blue); color: #fff; border-radius: 6px; padding: 2px 8px; font-weight: 700; }
 .sidebar-brand .brand-mark { background: var(--blue-600); }
 .sidebar nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
 .sidebar-link { color: #c9d6ea; padding: 10px 12px; border-radius: 6px; display: flex; gap: 10px; }

@@ -46,7 +46,6 @@ export default function AdminLayout() {
             <button type="button" className="sidebar-signout" onClick={handleSignOut}>Sign out</button>
           </div>
         )}
-        <Link to="/" className="sidebar-footer">← Back to website</Link>
       </aside>
       <div className="admin-main">
         {!isFirebaseConfigured && (

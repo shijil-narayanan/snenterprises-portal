@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, Navigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, isFirebaseConfigured } from '../firebase';
 import { useAuth } from '../auth/useAuth';
@@ -98,7 +98,6 @@ export default function Login() {
         </button>
         <div className="login-links">
           <button type="button" className="link-btn" onClick={handleReset}>Forgot password?</button>
-          <Link to="/">← Back to website</Link>
         </div>
       </form>
     </div>

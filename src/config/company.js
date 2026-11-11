@@ -1,7 +1,6 @@
-// SN Enterprises' own details, shown on the public site and printed invoices.
+// SN Enterprises' own details, shown on printed invoices and other documents.
 export const COMPANY = {
   name: 'SN ENTERPRISES',
-  tagline: 'Reliable industrial supplies & trading',
   address: {
     addressline1: '401, Sadguru Garden, Hotel Oriental Aster lane',
     addressline2: 'Nr. BMC School, Chakala, Andheri East',

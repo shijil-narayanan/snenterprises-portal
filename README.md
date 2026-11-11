@@ -1,12 +1,13 @@
 # SN Enterprises
 
-Company website and internal portal for **SN Enterprises**, built with React (Vite) and Firebase (Firestore).
+Internal admin portal for **SN Enterprises** (invoices, packing lists, companies, products), built with React (Vite) and Firebase.
+It is admin-only: every page requires sign-in. A public website, if needed, lives in a separate app.
 
 ## Routes
 
 | Path | Description |
 |------|-------------|
-| `/`, `/about`, `/services`, `/contact` | Public, customer-facing website |
+| `/` | Opens the portal (redirects to `/admin`) |
 | `/login` | Sign-in page for the portal |
 | `/admin` | Portal dashboard (welcome board) — signed-in users only |
 | `/admin/tax-invoices` | Tax invoice list (search, view, edit, delete) |
@@ -111,7 +112,7 @@ src/
   config/        company details, currencies, tax types, suggestions
   services/      Firestore data access (with localStorage fallback)
   utils/         invoice calculations and formatting
-  components/    public and admin layouts
-  pages/public/  website pages
+  components/    admin layout, document layouts, shared UI
+  auth/          sign-in state and route guard
   pages/admin/   portal pages (dashboard, tax invoices)
 ```

@@ -1,10 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import PublicLayout from './components/PublicLayout';
 import AdminLayout from './components/AdminLayout';
-import Home from './pages/public/Home';
-import About from './pages/public/About';
-import Services from './pages/public/Services';
-import Contact from './pages/public/Contact';
 import Login from './pages/Login';
 import RequireAuth from './auth/RequireAuth';
 import Dashboard from './pages/admin/Dashboard';
@@ -25,13 +20,8 @@ import ProductForm from './pages/admin/products/ProductForm';
 export default function App() {
   return (
     <Routes>
-      <Route element={<PublicLayout />}>
-        <Route index element={<Home />} />
-        <Route path="about" element={<About />} />
-        <Route path="services" element={<Services />} />
-        <Route path="contact" element={<Contact />} />
-      </Route>
-
+      {/* Admin-only app: the root opens the portal (sign-in first if needed) */}
+      <Route index element={<Navigate to="/admin" replace />} />
       <Route path="login" element={<Login />} />
 
       {/* Portal: signed-in users only */}
@@ -57,7 +47,7 @@ export default function App() {
         <Route path="products/:id/edit" element={<ProductForm />} />
       </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/admin" replace />} />
     </Routes>
   );
 }
