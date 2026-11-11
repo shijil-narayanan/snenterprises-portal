@@ -210,11 +210,6 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
 
 /* Invoice document (screen + print) */
 .paper { background: #fff; max-width: 900px; margin: 0 auto 24px; padding: 40px 44px; border: 1px solid #e3e8ef; border-radius: 4px; box-shadow: 0 2px 10px rgba(15,39,71,0.06); font-size: 0.9rem; line-height: 1.45; color: #111827; }
-.paper-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; padding-bottom: 16px; border-bottom: 3px solid var(--blue); }
-.paper-brand { display: flex; align-items: flex-start; gap: 16px; }
-.paper-logo { width: 112px; height: auto; flex-shrink: 0; }
-.paper-company { font-size: 1.4rem; font-weight: 800; color: var(--blue); letter-spacing: 0.02em; margin-bottom: 4px; }
-.paper-title { font-size: 1.5rem; font-weight: 800; letter-spacing: 0.12em; color: #111827; white-space: nowrap; }
 .paper-boxes { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #cbd2dc; margin: 20px 0; }
 .paper-box { padding: 12px 14px; }
 .paper-box + .paper-box { border-left: 1px solid #cbd2dc; }
@@ -254,8 +249,7 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
   .summary .btn-block, .summary .kbd-hint { display: none; }
   .mobile-savebar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; background: #fff; border-top: 1px solid var(--border); box-shadow: 0 -4px 12px rgba(0,0,0,0.06); }
   .paper { padding: 20px; }
-  .paper-head, .paper-foot { flex-direction: column; }
-  .paper-logo { width: 88px; }
+  .paper-foot { flex-direction: column; }
   .paper-boxes, .paper-bottom { grid-template-columns: 1fr; }
   .paper-box + .paper-box { border-left: 0; border-top: 1px solid #cbd2dc; }
   .flash { left: 16px; right: 16px; bottom: 80px; }
@@ -290,7 +284,7 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
 .pdf-render-host { position: fixed; left: -10000px; top: 0; width: 744px; padding: 0 12px; background: #fff; }
 .pdf-render-host .paper { border: 0; box-shadow: none; border-radius: 0; padding: 0; margin: 0; max-width: none; font-size: 13px; }
 /* The PDF always uses the desktop layout, whatever device creates it */
-.pdf-render-host .paper-head, .pdf-render-host .paper-foot, .pdf-render-host .paper-brand { flex-direction: row; }
+.pdf-render-host .paper-foot { flex-direction: row; }
 .pdf-render-host .paper-boxes { grid-template-columns: 1fr 1fr; }
 .pdf-render-host .paper-bottom { grid-template-columns: 1fr 300px; }
 .pdf-render-host .paper-box + .paper-box { border-left: 1px solid #cbd2dc; border-top: 0; }
@@ -353,4 +347,98 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
   .modal-pdf { height: 100%; border-radius: 0; }
   .modal-foot { border-radius: 0; }
   .pdf-stage { padding: 12px; }
+}
+
+/* Document header (tax + commercial invoice) */
+.doc-title { text-align: center; font-size: 1.6rem; font-weight: 700; padding-bottom: 4px; border-bottom: 1px solid #111827; margin-bottom: 12px; color: #111827; }
+.doc-head { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 16px; }
+.doc-logo { width: 150px; height: auto; flex-shrink: 0; }
+.doc-company { text-align: right; line-height: 1.4; }
+.doc-company-name { font-size: 1.5rem; font-weight: 800; letter-spacing: 0.04em; color: #111827; }
+.doc-contact { display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }
+.doc-contact svg { vertical-align: -1px; }
+@media screen and (max-width: 800px) {
+  .doc-head { flex-direction: column; align-items: flex-start; }
+  .doc-company { text-align: left; }
+  .doc-contact { justify-content: flex-start; }
+  .doc-logo { width: 110px; }
+}
+.pdf-render-host .doc-head { flex-direction: row; align-items: center; }
+.pdf-render-host .doc-company { text-align: right; }
+.pdf-render-host .doc-contact { justify-content: flex-end; }
+.pdf-render-host .doc-logo { width: 150px; }
+
+/* Commercial invoice document */
+.ci-doc { --ci-navy: #12407a; --ci-line: #1f2937; display: flex; flex-direction: column; font-size: 0.85rem; line-height: 1.4; }
+.ci-th { background: var(--ci-navy); color: #fff; padding: 6px 8px; text-align: center; font-weight: 500; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.ci-td, .ci-cell { padding: 6px 8px; text-align: center; }
+.ci-left { text-align: left; }
+.ci-right { text-align: right; }
+.ci-num { text-align: right; font-variant-numeric: tabular-nums; }
+.ci-strong { font-weight: 700; }
+.ci-small { font-size: 0.78rem; }
+.ci-grid { display: grid; border: 1px solid var(--ci-line); border-bottom: 0; }
+.ci-grid > * { border-right: 1px solid var(--ci-line); border-bottom: 1px solid var(--ci-line); }
+.ci-parties { grid-template-columns: 39% 13% 26% 22%; }
+.ci-parties > :nth-child(4n) { border-right: 0; }
+.ci-shipping { grid-template-columns: repeat(6, 1fr); border-top: 0; }
+.ci-shipping > :nth-child(6n) { border-right: 0; }
+.ci-marks { grid-template-columns: repeat(4, 1fr); border-top: 0; }
+.ci-marks > :nth-child(4n+1) { border-right: 0; }
+.ci-span4 { grid-column: 1 / -1; }
+
+.ci-items { --ci-cols: minmax(0, 1fr) 105px 105px 115px; display: flex; flex-direction: column; border: 1px solid var(--ci-line); border-top: 0; flex: 1; }
+.ci-row { display: grid; grid-template-columns: var(--ci-cols); }
+.ci-row > * { border-right: 1px solid var(--ci-line); }
+.ci-row > :last-child { border-right: 0; }
+.ci-items-head > * { border-right-color: #fff3; }
+.ci-item .ci-cell { padding-top: 10px; }
+.ci-desc { display: flex; gap: 10px; padding-left: 28px; }
+.ci-no { flex-shrink: 0; }
+.ci-filler { flex: 1; min-height: 80px; }
+.ci-notes { display: flex; flex-direction: column; justify-content: flex-end; white-space: pre-wrap; }
+.ci-total { border-top: 1px solid var(--ci-line); grid-template-columns: minmax(0, 1fr) 115px; }
+
+.ci-foot { display: grid; grid-template-columns: 1fr 1.2fr 0.85fr; border: 1px solid var(--ci-line); border-top: 0; }
+.ci-foot-col { display: flex; flex-direction: column; border-right: 1px solid var(--ci-line); }
+.ci-foot-col > .ci-td { flex: 1; }
+.ci-sign { display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 14px 8px; text-align: center; }
+
+/* PDF: stretch to the full A4 page (content width + side padding, 190 x 277 mm) */
+.pdf-render-host { container-type: inline-size; }
+.pdf-render-host .ci-fill { min-height: calc((100cqw + 24px) * 277 / 190 - 4px); }
+.pdf-render-host .ci-doc { font-size: 12.5px; }
+.pdf-render-host .ci-parties { grid-template-columns: 39% 13% 26% 22%; }
+.pdf-render-host .ci-shipping { grid-template-columns: repeat(6, 1fr); }
+
+@media screen and (max-width: 800px) {
+  .ci-doc { font-size: 0.78rem; }
+  .ci-items { --ci-cols: minmax(0, 1fr) 64px 64px 80px; }
+  .ci-total { grid-template-columns: minmax(0, 1fr) 80px; }
+  .ci-parties { grid-template-columns: 1fr 1fr; }
+  .ci-parties > * { border-right: 1px solid var(--ci-line); }
+  .ci-shipping { grid-template-columns: repeat(3, 1fr); }
+  .ci-foot { grid-template-columns: 1fr; }
+  .ci-foot-col { border-right: 0; }
+  .ci-desc { padding-left: 8px; }
+  .pdf-render-host .ci-items { --ci-cols: minmax(0, 1fr) 105px 105px 115px; }
+  .pdf-render-host .ci-total { grid-template-columns: minmax(0, 1fr) 115px; }
+  .pdf-render-host .ci-foot { grid-template-columns: 1fr 1.2fr 0.85fr; }
+  .pdf-render-host .ci-foot-col { border-right: 1px solid var(--ci-line); }
+  .pdf-render-host .ci-desc { padding-left: 28px; }
+}
+
+/* Commercial invoice form */
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 20px; }
+.li-fields-5 { grid-template-columns: 120px 90px 100px 120px minmax(0, 1fr); }
+.check { display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer; margin-top: 16px; }
+.check input { width: 16px; height: 16px; }
+.panel > .buyer-card + .field { margin-top: 0; }
+@media screen and (max-width: 1100px) {
+  .grid-3, .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media screen and (max-width: 800px) {
+  .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .li-fields-5 { grid-template-columns: 1fr 1fr; }
 }

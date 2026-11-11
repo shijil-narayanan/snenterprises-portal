@@ -7,7 +7,7 @@ import { DownloadIcon } from './Icons';
  * @param getInvoice  returns the invoice to render, or null to cancel (e.g. when the form is invalid)
  * @param iconOnly    compact icon button (used in tables)
  */
-export default function DownloadPdfButton({ getInvoice, iconOnly = false, className = 'btn', label = 'Download PDF' }) {
+export default function DownloadPdfButton({ getInvoice, iconOnly = false, className = 'btn', label = 'Download PDF', download = downloadInvoicePdf }) {
   const [busy, setBusy] = useState(false);
 
   const handleClick = async (e) => {
@@ -16,7 +16,7 @@ export default function DownloadPdfButton({ getInvoice, iconOnly = false, classN
     if (!invoice) return;
     setBusy(true);
     try {
-      await downloadInvoicePdf(invoice);
+      await download(invoice);
     } catch (err) {
       window.alert(`Could not create the PDF: ${err.message}`);
     } finally {

@@ -6,10 +6,12 @@ import About from './pages/public/About';
 import Services from './pages/public/Services';
 import Contact from './pages/public/Contact';
 import Dashboard from './pages/admin/Dashboard';
-import ComingSoon from './pages/admin/ComingSoon';
 import TaxInvoiceList from './pages/admin/tax-invoices/TaxInvoiceList';
 import TaxInvoiceForm from './pages/admin/tax-invoices/TaxInvoiceForm';
 import TaxInvoiceView from './pages/admin/tax-invoices/TaxInvoiceView';
+import CommercialInvoiceList from './pages/admin/commercial-invoices/CommercialInvoiceList';
+import CommercialInvoiceForm from './pages/admin/commercial-invoices/CommercialInvoiceForm';
+import CommercialInvoiceView from './pages/admin/commercial-invoices/CommercialInvoiceView';
 import CompanyList from './pages/admin/companies/CompanyList';
 import CompanyForm from './pages/admin/companies/CompanyForm';
 import ProductList from './pages/admin/products/ProductList';
@@ -32,7 +34,10 @@ export default function App() {
         <Route path="tax-invoices/new" element={<TaxInvoiceForm />} />
         <Route path="tax-invoices/:id" element={<TaxInvoiceView />} />
         <Route path="tax-invoices/:id/edit" element={<TaxInvoiceForm />} />
-        <Route path="commercial-invoices" element={<ComingSoon title="Commercial Invoices" />} />
+        <Route path="commercial-invoices" element={<CommercialInvoiceList />} />
+        <Route path="commercial-invoices/new" element={<CommercialInvoiceForm />} />
+        <Route path="commercial-invoices/:id" element={<CommercialInvoiceView />} />
+        <Route path="commercial-invoices/:id/edit" element={<CommercialInvoiceForm />} />
         <Route path="companies" element={<CompanyList />} />
         <Route path="companies/new" element={<CompanyForm />} />
         <Route path="companies/:id/edit" element={<CompanyForm />} />

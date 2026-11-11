@@ -20,5 +20,6 @@ export const COMPANY = {
     swiftCode: 'HDFCINBBXXX',
     branch: 'MIDC CROSS ROAD BRANCH, ANDHERI (EAST)',
   },
-  lut: 'AD2704240019843 DT. 0.1.04.2024',
+  // Letter of Undertaking for exports; renewed every financial year. Default for new commercial invoices.
+  lut: 'AD270426023252E DT. 10.04.2026',
 };

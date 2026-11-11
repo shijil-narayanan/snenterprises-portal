@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { listTaxInvoices } from '../../services/taxInvoices';
 import { companiesService } from '../../services/companies';
 import { productsService } from '../../services/products';
+import { listCommercialInvoices } from '../../services/commercialInvoices';
 import { formatDate, formatMoney } from '../../utils/invoice';
 
 export default function Dashboard() {
@@ -14,6 +15,7 @@ export default function Dashboard() {
     listTaxInvoices().then(setInvoices).catch((e) => setError(e.message));
     companiesService.list().then((l) => setCounts((c) => ({ ...c, companies: l.length }))).catch(() => {});
     productsService.list().then((l) => setCounts((c) => ({ ...c, products: l.length }))).catch(() => {});
+    listCommercialInvoices().then((l) => setCounts((c) => ({ ...c, commercial: l.length }))).catch(() => {});
   }, []);
 
   const recent = (invoices || []).slice(0, 5);
@@ -35,8 +37,8 @@ export default function Dashboard() {
         </div>
         <div className="card stat">
           <div className="stat-label">Commercial Invoices</div>
-          <div className="stat-value muted">—</div>
-          <span className="muted">Coming soon</span>
+          <div className="stat-value">{counts.commercial ?? '…'}</div>
+          <Link to="/admin/commercial-invoices">View all →</Link>
         </div>
         <div className="card stat">
           <div className="stat-label">Companies</div>

@@ -3,7 +3,7 @@ import { buildInvoicePdf } from '../utils/invoicePdf';
 import { CloseIcon, DownloadIcon } from './Icons';
 
 /** Modal that shows the invoice PDF page by page, with Close / Download in the footer. */
-export default function PdfPreviewModal({ invoice, onClose }) {
+export default function PdfPreviewModal({ invoice, onClose, build = buildInvoicePdf }) {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const downloadRef = useRef(null);
@@ -12,13 +12,13 @@ export default function PdfPreviewModal({ invoice, onClose }) {
   // Build the PDF once when the modal opens
   useEffect(() => {
     let cancelled = false;
-    buildInvoicePdf(invoice)
+    build(invoice)
       .then((r) => !cancelled && setResult(r))
       .catch((e) => !cancelled && setError(e.message));
     return () => {
       cancelled = true;
     };
-  }, [invoice]);
+  }, [invoice, build]);
 
   // Esc closes; lock page scroll while open
   useEffect(() => {

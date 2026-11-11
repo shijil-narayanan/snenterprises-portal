@@ -2,7 +2,7 @@ import { COMPANY } from '../config/company';
 import { TAX_TYPES } from '../config/catalog';
 import { addressLines, amountInWords, computeTotals, formatDate, formatMoney } from '../utils/invoice';
 import InvoiceTotals from '../pages/admin/tax-invoices/InvoiceTotals';
-import logo from '../assets/logo.png';
+import DocumentHeader from './DocumentHeader';
 
 /** The printable tax invoice. Used on the invoice page, for printing and for PDF downloads. */
 export default function InvoiceDocument({ invoice }) {
@@ -14,19 +14,7 @@ export default function InvoiceDocument({ invoice }) {
 
   return (
     <article className="paper">
-      <header className="paper-head">
-        <div className="paper-brand">
-          <img src={logo} alt={`${COMPANY.name} logo`} className="paper-logo" />
-          <div>
-            <div className="paper-company">{COMPANY.name}</div>
-            {addressLines(COMPANY.address).map((l) => <div key={l}>{l}</div>)}
-            <div>Mob: {COMPANY.mobile}</div>
-            <div>Email: {COMPANY.email}</div>
-            <div><strong>GSTIN:</strong> {COMPANY.gst}</div>
-          </div>
-        </div>
-        <div className="paper-title">TAX INVOICE</div>
-      </header>
+      <DocumentHeader title="Tax Invoice" />
 
       <div className="paper-boxes">
         <div className="paper-box">

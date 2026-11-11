@@ -130,3 +130,23 @@ export function amountInWords(amount, currencyCode) {
   if (minor) words += ` and ${toWords(minor)} ${cur.minor}`;
   return `${words} Only`;
 }
+
+// Amount in words without the currency name, e.g. "Two Thousand One Hundred Fifty Only"
+// (used where the currency is already printed, like "TOTAL USD: …")
+export function amountInWordsPlain(amount, currencyCode) {
+  const cur = CURRENCIES.find((c) => c.code === currencyCode) || { minor: 'Cents' };
+  const cents = Math.round((Number(amount) || 0) * 100);
+  const toWords = currencyCode === 'INR' ? indianWords : intlWords;
+  let words = toWords(Math.floor(cents / 100));
+  if (cents % 100) words += ` and ${toWords(cents % 100)} ${cur.minor}`;
+  return `${words} Only`;
+}
+
+// Number with grouping for the currency (Indian grouping for INR), no symbol
+export function formatAmount(value, currencyCode, { decimals = 2 } = {}) {
+  const n = Number(value) || 0;
+  return n.toLocaleString(currencyCode === 'INR' ? 'en-IN' : 'en-US', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: Math.max(decimals, 2),
+  });
+}

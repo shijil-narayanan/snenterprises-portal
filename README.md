@@ -12,7 +12,7 @@ Company website and internal portal for **SN Enterprises**, built with React (Vi
 | `/admin/tax-invoices/new` | Create a tax invoice |
 | `/admin/tax-invoices/:id` | View / print a tax invoice |
 | `/admin/tax-invoices/:id/edit` | Edit a tax invoice |
-| `/admin/commercial-invoices` | Placeholder (coming soon) |
+| `/admin/commercial-invoices` | Commercial (export) invoices — list, create, view/print, PDF, edit, delete |
 | `/admin/companies` | Companies (buyers) — list, search, add, edit, delete |
 | `/admin/products` | Products — list, search, add, edit, delete |
 
@@ -35,7 +35,7 @@ Without Firebase keys the app runs in **demo mode** and saves data in the browse
 4. `cp .env.example .env.local` and paste the values.
 5. Restart `npm run dev`. The yellow "Demo mode" banner disappears once Firestore is in use.
 
-Data is stored in the `taxInvoices`, `companies` and `products` collections. Development rules are in `firestore.rules`
+Data is stored in the `taxInvoices`, `commercialInvoices`, `companies` and `products` collections. Development rules are in `firestore.rules`
 (open access — lock them down before going live).
 
 ## Companies & products
@@ -45,6 +45,15 @@ these collections; the item's HSN code is filled in automatically. Each invoice 
 buyer's details, so editing or deleting a company later doesn't change existing invoices.
 
 SN Enterprises' own details (address, GSTIN, IEC, bank, LUT) are in `src/config/company.js`.
+
+## Commercial invoice fields
+
+Invoice number (suggested as `01/26-27`, per financial year) and date, PO number and date,
+consignee/importer and buyer (or "same as consignee") picked from Companies, shipping
+(origin, destination, vessel/flight, origin port, port of discharge, destination port — filled from
+the consignee's saved export details), items (product, HSN, qty + unit, price, amount; grouped by
+HSN on the document), optional notes (printed under the items), packages and marks & numbers,
+terms of delivery & payment, and the LUT reference (default in `src/config/company.js`).
 
 ## Tax invoice fields
 

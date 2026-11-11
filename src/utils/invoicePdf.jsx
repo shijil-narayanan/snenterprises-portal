@@ -1,19 +1,22 @@
 import { createRoot } from 'react-dom/client';
 import { flushSync } from 'react-dom';
 import InvoiceDocument from '../components/InvoiceDocument';
+import CommercialInvoiceDocument from '../components/CommercialInvoiceDocument';
 
 const A4 = { width: 210, height: 297, margin: 10 }; // mm
 
-export function invoicePdfFileName(invoice) {
-  return `Tax Invoice ${invoice.invoiceNumber || 'Draft'}`.replace(/[\\/:*?"<>|]+/g, '-') + '.pdf';
-}
+// Characters not allowed in file names become "-" (e.g. "01/ 26-27" -> "01-26-27")
+const safeFileName = (name) => `${name.replace(/\s*[\\/:*?"<>|]+\s*/g, '-').replace(/\s+/g, ' ').trim()}.pdf`;
+
+export const invoicePdfFileName = (invoice) => safeFileName(`Tax Invoice ${invoice.invoiceNumber || 'Draft'}`);
+export const commercialPdfFileName = (invoice) => safeFileName(`Commercial Invoice ${invoice.invoiceNumber || 'Draft'}`);
 
 /**
- * Renders the invoice off-screen (same design as the invoice page) and builds an A4 PDF.
- * Returns the PDF plus an image of each page, so a preview shows exactly what will be saved.
- * Long invoices continue onto extra pages.
+ * Renders a document off-screen and builds an A4 PDF from it.
+ * Returns an image of each page (for previews) and a save() function, so a preview
+ * shows exactly what will be saved. Long documents continue onto extra pages.
  */
-export async function buildInvoicePdf(invoice) {
+export async function buildPdf(element, fileName) {
   // Loaded only when needed, to keep the app fast
   const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import('html2canvas'), import('jspdf')]);
 
@@ -24,7 +27,7 @@ export async function buildInvoicePdf(invoice) {
   const root = createRoot(host);
 
   try {
-    flushSync(() => root.render(<InvoiceDocument invoice={invoice} />));
+    flushSync(() => root.render(element));
     if (document.fonts?.ready) await document.fonts.ready;
     // Wait for images (the logo) so they are in the capture
     await Promise.all(
@@ -41,7 +44,9 @@ export async function buildInvoicePdf(invoice) {
     const pagePx = Math.floor(contentH * pxPerMm);
     const pages = [];
 
-    for (let y = 0, page = 0; y < canvas.height; y += pagePx, page += 1) {
+    // Ignore a sliver of a few pixels left over at the end (rounding)
+    const lastPageMin = 8;
+    for (let y = 0, page = 0; y < canvas.height - (page ? lastPageMin : 0); y += pagePx, page += 1) {
       const sliceH = Math.min(pagePx, canvas.height - y);
       const slice = document.createElement('canvas');
       slice.width = canvas.width;
@@ -53,7 +58,6 @@ export async function buildInvoicePdf(invoice) {
       pages.push({ image });
     }
 
-    const fileName = invoicePdfFileName(invoice);
     pdf.setProperties({ title: fileName.replace(/\.pdf$/, '') });
     return { fileName, pages, save: () => pdf.save(fileName) };
   } finally {
@@ -62,6 +66,13 @@ export async function buildInvoicePdf(invoice) {
   }
 }
 
+export const buildInvoicePdf = (invoice) => buildPdf(<InvoiceDocument invoice={invoice} />, invoicePdfFileName(invoice));
+export const buildCommercialPdf = (invoice) =>
+  buildPdf(<CommercialInvoiceDocument invoice={invoice} fillPage />, commercialPdfFileName(invoice));
+
 export async function downloadInvoicePdf(invoice) {
   (await buildInvoicePdf(invoice)).save();
+}
+export async function downloadCommercialPdf(invoice) {
+  (await buildCommercialPdf(invoice)).save();
 }

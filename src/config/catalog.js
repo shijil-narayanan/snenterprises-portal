@@ -14,3 +14,14 @@ export const TAX_TYPES = [
 ];
 
 export const PAYMENT_TERM_PRESETS = ['Immediate', '15 days', '30 days', '45 days', '60 days'];
+
+// ---------- Commercial invoice ----------
+export const TRANSPORT_MODES = ['BY SEA', 'BY AIR'];
+export const ORIGIN_PORTS = ['NHAVA SHEVA', 'MUMBAI', 'CHENNAI'];
+export const UNITS = ['Nos', 'Pcs', 'Sets', 'Kgs', 'Mtrs', 'Boxes', 'Pairs'];
+export const DELIVERY_TERMS_PRESETS = [
+  'C&F & 100% Against Delivery',
+  'FOB & 100% Advance',
+  'CIF & 100% Against Delivery',
+  'Ex-Works & 100% Advance',
+];
