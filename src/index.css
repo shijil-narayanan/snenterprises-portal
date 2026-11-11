@@ -538,3 +538,4 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
   .sidebar-closed .sidebar-top .sidebar-text { display: inline; }
   .sidebar-closed .sidebar nav, .sidebar-closed .sidebar-user { display: none; }
 }
+.sidebar-brand:hover { text-decoration: none; }
