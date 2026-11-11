@@ -1,4 +1,4 @@
-import { COMPANY } from '../../config/company';
+import { useCompany } from '../../config/companySettings';
 import { addressLines, formatDate } from '../../utils/invoice';
 
 // Shared blocks of the export documents (commercial invoice and packing list),
@@ -57,8 +57,11 @@ export function ExportPartiesAndShipping({ doc: invoice }) {
 
 /** Marks & Nos, then bank details, terms, LUT and signatory. */
 export function ExportMarksAndFoot({ doc: invoice }) {
+  const current = useCompany();
+  // The seller details saved with the document; older documents use the current Settings
+  const company = invoice.seller || current;
   const marks = invoice.marks || {};
-  const bank = COMPANY.bankDetails;
+  const bank = company.bankDetails || {};
   return (
     <>
       {/* Marks & Nos */}
@@ -77,7 +80,7 @@ export function ExportMarksAndFoot({ doc: invoice }) {
         <div className="ci-foot-col">
           <div className="ci-th ci-left">Bank Details</div>
           <div className="ci-td ci-left">
-            <div>Account Holder: {COMPANY.name}</div>
+            <div>Account Holder: {company.name}</div>
             <div>Account No: {bank.accountNumber}</div>
             <div>IFSC CODE: {bank.ifsc}</div>
             <div>SWIFT CODE: {bank.swiftCode}</div>
@@ -94,7 +97,7 @@ export function ExportMarksAndFoot({ doc: invoice }) {
           </div>
         </div>
         <div className="ci-sign">
-          <div>For {COMPANY.name}</div>
+          <div>For {company.name}</div>
           <div className="ci-strong">Authorised Signatory</div>
         </div>
       </div>

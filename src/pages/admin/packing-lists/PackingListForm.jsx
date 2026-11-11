@@ -22,6 +22,8 @@ import { buildPackingPdf } from '../../../utils/invoicePdf';
 import { formatDate } from '../../../utils/invoice';
 import { packageNumbers, suggestCommercialNumber } from '../../../utils/commercial';
 import { AuditLine } from '../../../components/AuditInfo';
+import { sellerSnapshot } from '../../../config/companySettings';
+import { ensureCompanySettings } from '../../../services/settings';
 import {
   emptyPackingItem,
   emptyPackingList,
@@ -80,6 +82,7 @@ export default function PackingListForm() {
     let cancelled = false;
     (async () => {
       try {
+        await ensureCompanySettings(); // so defaults like the LUT come from Settings
         const [lists, ciList, companyList, productList] = await Promise.all([
           listPackingLists(), listCommercialInvoices().catch(() => []), companiesService.list(), productsService.list(),
         ]);
@@ -222,6 +225,7 @@ export default function PackingListForm() {
       marks: { ...form.marks, numbers: effectiveNumbers },
       consignee: liveConsignee ? companySnapshot(liveConsignee) : form.consignee,
       buyer: form.buyerSameAsConsignee ? null : liveBuyer ? companySnapshot(liveBuyer) : form.buyer,
+      seller: sellerSnapshot(),
     };
   };
 

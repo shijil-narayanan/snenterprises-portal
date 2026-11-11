@@ -9,7 +9,8 @@ import {
   query,
   updateDoc,
 } from 'firebase/firestore';
-import { auth, db, isFirebaseConfigured } from '../firebase';
+import { db, isFirebaseConfigured } from '../firebase';
+import { currentActor } from './actor';
 
 /**
  * Generic CRUD for one Firestore collection.
@@ -43,10 +44,7 @@ export function createCollectionService(name, { toRecord = (d) => d, orderField 
   };
 
   // Who is making the change (the signed-in user), saved as createdBy / updatedBy
-  const actor = () => {
-    const u = auth?.currentUser;
-    return u ? { uid: u.uid, email: u.email || '', name: u.displayName || '' } : null;
-  };
+  const actor = currentActor;
 
   const stamp = (data) => {
     const now = new Date().toISOString();

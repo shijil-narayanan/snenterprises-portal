@@ -1,4 +1,4 @@
-import { COMPANY } from '../config/company';
+import { getCompany } from '../config/companySettings';
 import { todayISO } from './invoice';
 
 const num = (v) => Number(v) || 0;
@@ -28,7 +28,7 @@ export const emptyPackingList = () => ({
   notes: '',
   marks: { name: '', numbers: '', port: '', origin: 'MADE IN INDIA' },
   deliveryTerms: '',
-  lut: COMPANY.lut,
+  lut: getCompany().lut,
 });
 
 /** Totals for one packing row: boxes × per-box figures. */

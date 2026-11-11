@@ -22,6 +22,8 @@ function toRecord(data) {
     // Snapshot of the buyer's details at the time of invoicing,
     // so later edits to the company don't change old invoices.
     buyer: data.buyer || null,
+    // Our own company details as they were when this was saved (from Settings)
+    seller: data.seller || null,
     currency: data.currency || 'INR',
     paymentTerms: str(data.paymentTerms),
     taxType: data.taxType || 'CGST_SGST',

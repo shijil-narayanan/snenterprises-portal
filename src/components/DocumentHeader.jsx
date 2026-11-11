@@ -1,4 +1,3 @@
-import { COMPANY } from '../config/company';
 import logo from '../assets/logo.png';
 
 const PhoneIcon = () => (
@@ -15,25 +14,28 @@ const MailIcon = () => (
 /**
  * Shared header for printed documents: centred title, logo on the left,
  * company details on the right (same layout as the commercial invoice sample).
+ * `company` is the seller's details (an invoice's saved copy, or the current Settings).
  */
-export default function DocumentHeader({ title, showIec = false }) {
-  const a = COMPANY.address;
-  const ids = [showIec && `IEC : ${COMPANY.iec}`, `GST: ${COMPANY.gst}`].filter(Boolean).join(', ');
+export default function DocumentHeader({ title, company, showIec = false }) {
+  const a = company.address || {};
+  const ids = [showIec && company.iec && `IEC : ${company.iec}`, company.gst && `GST: ${company.gst}`].filter(Boolean).join(', ');
+  const cityLine = [[a.city, a.pincode].filter(Boolean).join(' '), a.state, a.country].filter(Boolean).join(', ');
   return (
     <>
       <div className="doc-title">{title}</div>
       <header className="doc-head">
-        <img src={logo} alt={`${COMPANY.name} logo`} className="doc-logo" />
+        <img src={logo} alt={`${company.name} logo`} className="doc-logo" />
         <div className="doc-company">
-          <div className="doc-company-name">{COMPANY.name}</div>
-          <div>{a.addressline1},</div>
-          <div>{a.addressline2},</div>
-          <div>{a.city} {a.pincode}, {a.country}</div>
+          <div className="doc-company-name">{company.name}</div>
+          {a.addressline1 && <div>{a.addressline1},</div>}
+          {a.addressline2 && <div>{a.addressline2},</div>}
+          {cityLine && <div>{cityLine}</div>}
           <div className="doc-contact">
-            <span><PhoneIcon /> {COMPANY.mobile}</span>
-            <span><MailIcon /> {COMPANY.email}</span>
+            {company.mobile && <span><PhoneIcon /> {company.mobile}</span>}
+            {company.phone && <span><PhoneIcon /> {company.phone}</span>}
+            {company.email && <span><MailIcon /> {company.email}</span>}
           </div>
-          <div>{ids}</div>
+          {ids && <div>{ids}</div>}
         </div>
       </header>
     </>

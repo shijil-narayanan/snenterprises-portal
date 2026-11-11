@@ -4,7 +4,7 @@ import { createTaxInvoice, getTaxInvoice, listTaxInvoices, updateTaxInvoice } fr
 import { companiesService } from '../../../services/companies';
 import { productsService } from '../../../services/products';
 import { CURRENCIES, PAYMENT_TERM_PRESETS, TAX_TYPES } from '../../../config/catalog';
-import { COMPANY } from '../../../config/company';
+import { getCompany, sellerSnapshot } from '../../../config/companySettings';
 import InvoiceTotals from './InvoiceTotals';
 import DateInput from '../../../components/DateInput';
 import SearchSelect from '../../../components/SearchSelect';
@@ -12,6 +12,7 @@ import { ArrowLeftIcon, FileIcon, PlusIcon, TrashIcon } from '../../../component
 import PdfPreviewModal from '../../../components/PdfPreviewModal';
 import useFormGuards from '../../../hooks/useFormGuards';
 import { AuditLine } from '../../../components/AuditInfo';
+import { ensureCompanySettings } from '../../../services/settings';
 import {
   addressLines,
   amountInWords,
@@ -23,7 +24,6 @@ import {
   suggestInvoiceNumber,
 } from '../../../utils/invoice';
 
-const OUR_STATE_CODE = COMPANY.gst.slice(0, 2);
 
 // Buyer details copied onto the invoice (without bookkeeping fields)
 const buyerSnapshot = ({ id: _id, createdAt: _c, updatedAt: _u, ...rest }) => rest;
@@ -32,7 +32,7 @@ const buyerSnapshot = ({ id: _id, createdAt: _c, updatedAt: _u, ...rest }) => re
 function suggestedTaxType(company) {
   const code = (company?.gst || '').slice(0, 2);
   if (!/^\d{2}$/.test(code)) return null;
-  return code === OUR_STATE_CODE ? 'CGST_SGST' : 'IGST';
+  return code === (getCompany().gst || '').slice(0, 2) ? 'CGST_SGST' : 'IGST';
 }
 
 function validate(form, usedNumbers) {
@@ -78,6 +78,7 @@ export default function TaxInvoiceForm() {
     let cancelled = false;
     (async () => {
       try {
+        await ensureCompanySettings(); // so defaults like the LUT come from Settings
         const [all, companyList, productList] = await Promise.all([
           listTaxInvoices(),
           companiesService.list(),
@@ -221,6 +222,7 @@ export default function TaxInvoiceForm() {
       items,
       buyer: company ? buyerSnapshot(company) : form.buyer,
       totals: computeTotals(items, form.taxType),
+      seller: sellerSnapshot(),
     };
   };
 

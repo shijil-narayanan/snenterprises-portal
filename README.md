@@ -18,6 +18,7 @@ It is admin-only: every page requires sign-in. A public website, if needed, live
 | `/admin/packing-lists` | Packing lists — create from a commercial invoice or from scratch, view/print, PDF, edit, delete |
 | `/admin/companies` | Companies (buyers) — list, search, add, edit, delete |
 | `/admin/products` | Products — list, search, add, edit, delete |
+| `/admin/settings` | Company Settings — your own name, GSTIN, IEC, address, contact, bank account and LUT |
 
 > `/admin` requires sign-in (Firebase Authentication, email + password). `/login` is the sign-in page.
 
@@ -47,7 +48,9 @@ Companies and products are managed from their own tabs in the portal. The tax in
 these collections; the item's HSN code is filled in automatically. Each invoice stores a copy of the
 buyer's details, so editing or deleting a company later doesn't change existing invoices.
 
-SN Enterprises' own details (address, GSTIN, IEC, bank, LUT) are in `src/config/company.js`.
+SN Enterprises' own details (address, GSTIN, IEC, contact, bank, LUT) are edited on the **Company Settings** page and
+stored in Firestore (`settings/company`); `src/config/company.js` only holds the starting values. Each invoice and
+packing list saves a copy of these details when it is saved, so later changes don't alter documents already issued.
 
 ## Commercial invoice fields
 
@@ -56,7 +59,7 @@ consignee/importer and buyer (or "same as consignee") picked from Companies, shi
 (origin, destination, vessel/flight, origin port, port of discharge, destination port — filled from
 the consignee's saved export details), items (product, HSN, qty + unit, price, amount; grouped by
 HSN on the document), optional notes (printed under the items), packages and marks & numbers,
-terms of delivery & payment, and the LUT reference (default in `src/config/company.js`).
+terms of delivery & payment, and the LUT reference (default from Company Settings).
 
 ## Packing list fields
 

@@ -1,6 +1,7 @@
 import { amountInWordsPlain, formatAmount } from '../utils/invoice';
 import { commercialTotal, groupItemsByHsn } from '../utils/commercial';
 import DocumentHeader from './DocumentHeader';
+import { useCompany } from '../config/companySettings';
 import { ExportMarksAndFoot, ExportPartiesAndShipping } from './export/ExportDocParts';
 
 // Price as entered (no forced decimals), e.g. 215 or 2.75
@@ -14,13 +15,14 @@ const formatRate = (v, currency) => {
  * fillPage stretches the item area to the bottom of the A4 page, like the paper form.
  */
 export default function CommercialInvoiceDocument({ invoice, fillPage = false }) {
+  const current = useCompany();
   const cur = invoice.currency || 'USD';
   const total = invoice.total ?? commercialTotal(invoice.items);
   const groups = groupItemsByHsn(invoice.items || []);
 
   return (
     <article className={`paper ci-doc${fillPage ? ' ci-fill' : ''}`}>
-      <DocumentHeader title="Commercial Invoice" showIec />
+      <DocumentHeader title="Commercial Invoice" company={invoice.seller || current} showIec />
 
       <ExportPartiesAndShipping doc={invoice} />
 

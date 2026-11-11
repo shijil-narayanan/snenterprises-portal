@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { companiesService, toCompanyRecord } from '../../../services/companies';
 import { listTaxInvoices } from '../../../services/taxInvoices';
-import { COMPANY } from '../../../config/company';
+import { getCompany } from '../../../config/companySettings';
 import { GSTIN_PATTERN, gstStateName } from '../../../config/gstStates';
 import { addressLines } from '../../../utils/invoice';
 import useFormGuards from '../../../hooks/useFormGuards';
@@ -96,7 +96,7 @@ export default function CompanyForm() {
   };
 
   const gstValid = GSTIN_PATTERN.test(form.gst);
-  const sameState = gstValid && form.gst.slice(0, 2) === COMPANY.gst.slice(0, 2);
+  const sameState = gstValid && form.gst.slice(0, 2) === (getCompany().gst || '').slice(0, 2);
   const gstHelp = gstValid
     ? `${gstStateName(form.gst) || 'Unknown state'} (${form.gst.slice(0, 2)}) — invoices will use ${sameState ? 'CGST + SGST' : 'IGST'}`
     : 'Leave empty for export customers.';

@@ -1,4 +1,5 @@
 import DocumentHeader from './DocumentHeader';
+import { useCompany } from '../config/companySettings';
 import { ExportMarksAndFoot, ExportPartiesAndShipping } from './export/ExportDocParts';
 import { groupItemsByHsn } from '../utils/commercial';
 import { formatQty, formatWeight, packingTotals, rowTotals, withPackageRanges } from '../utils/packing';
@@ -42,6 +43,7 @@ function BreakdownTable({ item }) {
  * commercial invoice; the item table shows packages, pieces and weights instead of prices.
  */
 export default function PackingListDocument({ list, fillPage = false }) {
+  const current = useCompany();
   const items = withPackageRanges(list.items || []);
   const groups = groupItemsByHsn(items);
   const totals = list.totals || packingTotals(list.items);
@@ -50,7 +52,7 @@ export default function PackingListDocument({ list, fillPage = false }) {
 
   return (
     <article className={`paper ci-doc${fillPage ? ' ci-fill' : ''}`}>
-      <DocumentHeader title="Packing List" showIec />
+      <DocumentHeader title="Packing List" company={list.seller || current} showIec />
       <ExportPartiesAndShipping doc={doc} />
 
       <div className="ci-items pl-items">

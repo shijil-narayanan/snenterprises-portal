@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { flushSync } from 'react-dom';
 import InvoiceDocument from '../components/InvoiceDocument';
+import { ensureCompanySettings } from '../services/settings';
 import CommercialInvoiceDocument from '../components/CommercialInvoiceDocument';
 import PackingListDocument from '../components/PackingListDocument';
 
@@ -26,7 +27,7 @@ export const packingPdfFileName = (list) => safeFileName(`Packing List ${list.in
  */
 export async function buildPdf(element, fileName) {
   // Loaded only when needed, to keep the app fast
-  const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import('html2canvas'), import('jspdf')]);
+  const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import('html2canvas'), import('jspdf'), ensureCompanySettings()]);
 
   const host = document.createElement('div');
   host.className = 'pdf-render-host';

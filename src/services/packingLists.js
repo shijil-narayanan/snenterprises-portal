@@ -32,6 +32,8 @@ function toRecord(data) {
     poDate: data.poDate || '',
     consigneeId: data.consigneeId || '',
     consignee: data.consignee || null,
+    // Our own company details as they were when this was saved (from Settings)
+    seller: data.seller || null,
     buyerSameAsConsignee: data.buyerSameAsConsignee !== false,
     buyerId: data.buyerSameAsConsignee === false ? data.buyerId || '' : '',
     buyer: data.buyerSameAsConsignee === false ? data.buyer || null : null,

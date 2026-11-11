@@ -1,4 +1,4 @@
-import { COMPANY } from '../config/company';
+import { useCompany } from '../config/companySettings';
 import { TAX_TYPES } from '../config/catalog';
 import { addressLines, amountInWords, computeTotals, formatDate, formatMoney } from '../utils/invoice';
 import InvoiceTotals from '../pages/admin/tax-invoices/InvoiceTotals';
@@ -9,12 +9,15 @@ export default function InvoiceDocument({ invoice }) {
   const totals = invoice.totals || computeTotals(invoice.items, invoice.taxType);
   const buyer = invoice.buyer || {};
   const buyerContact = [buyer.email, buyer.mobile || buyer.phone].filter(Boolean).join(' · ');
-  const bank = COMPANY.bankDetails;
+  const current = useCompany();
+  // The seller details saved with the invoice; older invoices use the current Settings
+  const company = invoice.seller || current;
+  const bank = company.bankDetails || {};
   const taxLabel = TAX_TYPES.find((t) => t.value === invoice.taxType)?.short;
 
   return (
     <article className="paper">
-      <DocumentHeader title="Tax Invoice" />
+      <DocumentHeader title="Tax Invoice" company={company} />
 
       <div className="paper-boxes">
         <div className="paper-box">
@@ -82,7 +85,7 @@ export default function InvoiceDocument({ invoice }) {
       <footer className="paper-foot">
         <div className="paper-note">This is a computer-generated invoice.</div>
         <div className="paper-sign">
-          <div>For <strong>{COMPANY.name}</strong></div>
+          <div>For <strong>{company.name}</strong></div>
           <div className="paper-sign-line">Authorised Signatory</div>
         </div>
       </footer>

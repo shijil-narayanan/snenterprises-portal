@@ -1,6 +1,8 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
+import { useEffect } from 'react';
 import Flash from './Flash';
+import { ensureCompanySettings } from '../services/settings';
 import { auth, isFirebaseConfigured } from '../firebase';
 import { useAuth } from '../auth/useAuth';
 
@@ -12,12 +14,19 @@ const tabs = [
   { section: 'Master Data' },
   { to: '/admin/companies', label: 'Companies', icon: '🏢' },
   { to: '/admin/products', label: 'Products', icon: '🏷️' },
+  { section: 'Setup' },
+  { to: '/admin/settings', label: 'Company Settings', icon: '⚙️' },
 ];
 
 export default function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  // Load the company details saved in Settings (used on invoices and PDFs)
+  useEffect(() => {
+    ensureCompanySettings();
+  }, []);
 
   const handleSignOut = async () => {
     await signOut(auth);

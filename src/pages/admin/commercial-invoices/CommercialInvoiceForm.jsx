@@ -25,6 +25,8 @@ import { companySnapshot, validateExportHeader } from '../../../utils/exportForm
 import { buildCommercialPdf } from '../../../utils/invoicePdf';
 import { amountInWordsPlain, formatAmount, lineAmount } from '../../../utils/invoice';
 import { AuditLine } from '../../../components/AuditInfo';
+import { sellerSnapshot } from '../../../config/companySettings';
+import { ensureCompanySettings } from '../../../services/settings';
 import {
   commercialTotal,
   emptyCommercialInvoice,
@@ -64,6 +66,7 @@ export default function CommercialInvoiceForm() {
     let cancelled = false;
     (async () => {
       try {
+        await ensureCompanySettings(); // so defaults like the LUT come from Settings
         const [all, companyList, productList] = await Promise.all([
           listCommercialInvoices(), companiesService.list(), productsService.list(),
         ]);
@@ -161,6 +164,7 @@ export default function CommercialInvoiceForm() {
       total: commercialTotal(items),
       consignee: liveConsignee ? companySnapshot(liveConsignee) : form.consignee,
       buyer: form.buyerSameAsConsignee ? null : liveBuyer ? companySnapshot(liveBuyer) : form.buyer,
+      seller: sellerSnapshot(),
     };
   };
 

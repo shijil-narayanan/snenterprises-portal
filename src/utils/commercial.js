@@ -1,4 +1,4 @@
-import { COMPANY } from '../config/company';
+import { getCompany } from '../config/companySettings';
 import { lineAmount, todayISO } from './invoice';
 
 const round2 = (n) => Math.round((Number(n) || 0) * 100) / 100;
@@ -27,7 +27,7 @@ export const emptyCommercialInvoice = () => ({
   packages: '',
   marks: { name: '', numbers: '', port: '', origin: 'MADE IN INDIA' },
   deliveryTerms: '',
-  lut: COMPANY.lut,
+  lut: getCompany().lut,
 });
 
 export const commercialTotal = (items = []) => round2(items.reduce((sum, it) => sum + lineAmount(it), 0));

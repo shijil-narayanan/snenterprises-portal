@@ -16,6 +16,7 @@ import CompanyList from './pages/admin/companies/CompanyList';
 import CompanyForm from './pages/admin/companies/CompanyForm';
 import ProductList from './pages/admin/products/ProductList';
 import ProductForm from './pages/admin/products/ProductForm';
+import CompanySettings from './pages/admin/settings/CompanySettings';
 
 export default function App() {
   return (
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="products" element={<ProductList />} />
         <Route path="products/new" element={<ProductForm />} />
         <Route path="products/:id/edit" element={<ProductForm />} />
+        <Route path="settings" element={<CompanySettings />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/admin" replace />} />
