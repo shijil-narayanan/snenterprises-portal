@@ -5,6 +5,8 @@ import Home from './pages/public/Home';
 import About from './pages/public/About';
 import Services from './pages/public/Services';
 import Contact from './pages/public/Contact';
+import Login from './pages/Login';
+import RequireAuth from './auth/RequireAuth';
 import Dashboard from './pages/admin/Dashboard';
 import TaxInvoiceList from './pages/admin/tax-invoices/TaxInvoiceList';
 import TaxInvoiceForm from './pages/admin/tax-invoices/TaxInvoiceForm';
@@ -30,8 +32,10 @@ export default function App() {
         <Route path="contact" element={<Contact />} />
       </Route>
 
-      {/* TODO: wrap in an auth guard (Firebase Auth) before going live */}
-      <Route path="admin" element={<AdminLayout />}>
+      <Route path="login" element={<Login />} />
+
+      {/* Portal: signed-in users only */}
+      <Route path="admin" element={<RequireAuth><AdminLayout /></RequireAuth>}>
         <Route index element={<Dashboard />} />
         <Route path="tax-invoices" element={<TaxInvoiceList />} />
         <Route path="tax-invoices/new" element={<TaxInvoiceForm />} />

@@ -1,6 +1,8 @@
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
 import Flash from './Flash';
-import { isFirebaseConfigured } from '../firebase';
+import { auth, isFirebaseConfigured } from '../firebase';
+import { useAuth } from '../auth/useAuth';
 
 const tabs = [
   { to: '/admin', label: 'Dashboard', icon: '🏠', end: true },
@@ -14,6 +16,13 @@ const tabs = [
 
 export default function AdminLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut(auth);
+    navigate('/login', { replace: true });
+  };
   return (
     <div className="admin">
       <aside className="sidebar no-print">
@@ -31,6 +40,12 @@ export default function AdminLayout() {
             ),
           )}
         </nav>
+        {user && (
+          <div className="sidebar-user">
+            <div className="sidebar-user-email" title={user.email}>{user.email}</div>
+            <button type="button" className="sidebar-signout" onClick={handleSignOut}>Sign out</button>
+          </div>
+        )}
         <Link to="/" className="sidebar-footer">← Back to website</Link>
       </aside>
       <div className="admin-main">

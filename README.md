@@ -7,7 +7,8 @@ Company website and internal portal for **SN Enterprises**, built with React (Vi
 | Path | Description |
 |------|-------------|
 | `/`, `/about`, `/services`, `/contact` | Public, customer-facing website |
-| `/admin` | Portal dashboard (welcome board) |
+| `/login` | Sign-in page for the portal |
+| `/admin` | Portal dashboard (welcome board) — signed-in users only |
 | `/admin/tax-invoices` | Tax invoice list (search, view, edit, delete) |
 | `/admin/tax-invoices/new` | Create a tax invoice |
 | `/admin/tax-invoices/:id` | View / print a tax invoice |
@@ -17,7 +18,7 @@ Company website and internal portal for **SN Enterprises**, built with React (Vi
 | `/admin/companies` | Companies (buyers) — list, search, add, edit, delete |
 | `/admin/products` | Products — list, search, add, edit, delete |
 
-> `/admin` is **not secured yet**. Add Firebase Authentication and a route guard before going live.
+> `/admin` requires sign-in (Firebase Authentication, email + password). `/login` is the sign-in page.
 
 ## Getting started
 
@@ -37,7 +38,7 @@ Without Firebase keys the app runs in **demo mode** and saves data in the browse
 5. Restart `npm run dev`. The yellow "Demo mode" banner disappears once Firestore is in use.
 
 Data is stored in the `taxInvoices`, `commercialInvoices`, `packingLists`, `companies` and `products` collections. Development rules are in `firestore.rules`
-(open access — lock them down before going live).
+allow reads and writes only for signed-in users.
 
 ## Companies & products
 
@@ -69,10 +70,22 @@ Invoice date, invoice number (auto-suggested as `SNE/<FY>/<nnn>`), PO date, PO n
 currency, payment terms, line items (item, HSN, qty, rate, amount) and tax
 (CGST 9% + SGST 9%, or IGST 18%). Sub total, taxes and grand total are calculated automatically.
 
-## Deploying to Firebase Hosting
+## Sign-in (Firebase Authentication)
 
-> **Add a login to `/admin` and lock down `firestore.rules` before deploying** — otherwise anyone
-> with the site's address can read and change all data.
+One-time setup in the Firebase console:
+
+1. **Build → Authentication → Get started**, then under **Sign-in method** enable **Email/Password**.
+2. **Authentication → Users → Add user**: enter the email and password for each person who should
+   use the portal. There is no public sign-up page, so only users added here can sign in.
+3. Publish the rules in `firestore.rules` (signed-in users only) — `npm run deploy` does this, or paste
+   them into **Firestore Database → Rules** and click **Publish**.
+
+"Forgot password?" on the sign-in page emails a reset link to existing users.
+
+For local testing you can run the Firebase emulators and point the app at them with
+`VITE_AUTH_EMULATOR=http://127.0.0.1:9099` and `VITE_FIRESTORE_EMULATOR=127.0.0.1:8080`.
+
+## Deploying to Firebase Hosting
 
 One-time setup on your computer:
 

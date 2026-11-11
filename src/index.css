@@ -498,3 +498,20 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
 .prefill-banner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
 .prefill-jump { margin-left: auto; font-weight: 600; white-space: nowrap; color: #17663a; }
 .panel-highlight { border-color: #9ec0f7; box-shadow: 0 0 0 3px #e8f0fe; scroll-margin-top: 16px; }
+
+/* Sign-in */
+.login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 16px; background: linear-gradient(160deg, #0f2747 0%, #12407a 100%); }
+.login-card { width: 100%; max-width: 400px; background: #fff; border-radius: 14px; padding: 32px 28px; box-shadow: 0 20px 50px rgba(0,0,0,0.25); display: flex; flex-direction: column; gap: 14px; }
+.login-card h1 { margin: 4px 0 0; font-size: 1.35rem; text-align: center; }
+.login-card > p { margin: 0 0 4px; text-align: center; }
+.login-logo { width: 120px; align-self: center; }
+.login-card .field { flex: none; }
+.login-links { display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; }
+.password-wrap { position: relative; }
+.password-wrap .input { padding-right: 64px; }
+.password-toggle { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: 0; background: none; color: var(--blue); font: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer; padding: 6px 8px; }
+.auth-checking { min-height: 100vh; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--muted); }
+.sidebar-user { border-top: 1px solid rgba(255,255,255,0.12); padding: 12px 12px 4px; margin-top: 8px; }
+.sidebar-user-email { color: #fff; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sidebar-signout { border: 1px solid rgba(255,255,255,0.3); background: transparent; color: #c9d6ea; border-radius: 6px; padding: 5px 12px; margin-top: 8px; font: inherit; font-size: 0.8rem; cursor: pointer; }
+.sidebar-signout:hover { background: rgba(255,255,255,0.08); color: #fff; }
