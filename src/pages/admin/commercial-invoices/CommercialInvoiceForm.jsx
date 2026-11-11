@@ -8,63 +8,33 @@ import {
 } from '../../../services/commercialInvoices';
 import { companiesService } from '../../../services/companies';
 import { productsService } from '../../../services/products';
-import { CURRENCIES, DELIVERY_TERMS_PRESETS, ORIGIN_PORTS, TRANSPORT_MODES, UNITS } from '../../../config/catalog';
-import DateInput from '../../../components/DateInput';
+import { CURRENCIES, UNITS } from '../../../config/catalog';
 import SearchSelect from '../../../components/SearchSelect';
 import PdfPreviewModal from '../../../components/PdfPreviewModal';
 import { ArrowLeftIcon, FileIcon, PlusIcon, TrashIcon } from '../../../components/Icons';
 import useFormGuards from '../../../hooks/useFormGuards';
+import {
+  FieldError,
+  InvoiceDetailsSection,
+  MarksSection,
+  PartiesSection,
+  ShippingSection,
+  TermsSection,
+} from '../../../components/export/ExportFormSections';
+import { companySnapshot, validateExportHeader } from '../../../utils/exportForm';
 import { buildCommercialPdf } from '../../../utils/invoicePdf';
-import { addressLines, amountInWordsPlain, formatAmount, lineAmount } from '../../../utils/invoice';
+import { amountInWordsPlain, formatAmount, lineAmount } from '../../../utils/invoice';
 import {
   commercialTotal,
   emptyCommercialInvoice,
   emptyCommercialItem,
-  shippingFromCompany,
   suggestCommercialNumber,
 } from '../../../utils/commercial';
 
-const snapshot = ({ id: _id, createdAt: _c, updatedAt: _u, ...rest }) => rest;
-const packageNumbers = (n) => (Number(n) > 0 ? (Number(n) === 1 ? 'No. 1' : `No. 1 to ${Number(n)}`) : '');
-
 function validate(form, usedNumbers) {
-  const errors = {};
-  const number = form.invoiceNumber.trim();
-  if (!number) errors.invoiceNumber = 'Invoice number is required';
-  else if (usedNumbers.has(number.toLowerCase())) errors.invoiceNumber = 'This invoice number is already used';
-  if (!form.invoiceDate) errors.invoiceDate = 'Invoice date is required';
-  if (!form.consigneeId) errors.consignee = 'Select the consignee / importer';
-  if (!form.buyerSameAsConsignee && !form.buyerId) errors.buyer = 'Select the buyer, or tick “Same as consignee”';
+  const errors = validateExportHeader(form, usedNumbers);
   if (!form.items.some((it) => it.description.trim())) errors.items = 'Add at least one item';
   return errors;
-}
-
-const FieldError = ({ message }) => (message ? <div className="field-error">{message}</div> : null);
-
-function Chips({ options, value, onPick }) {
-  return (
-    <div className="chips">
-      {options.map((o) => (
-        <button type="button" key={o} className={`chip${value === o ? ' chip-active' : ''}`} onClick={() => onPick(o)}>{o}</button>
-      ))}
-    </div>
-  );
-}
-
-function PartyCard({ company, editable }) {
-  if (!company?.name) return null;
-  const contact = [company.email, company.mobile || company.phone].filter(Boolean);
-  return (
-    <div className="buyer-card">
-      <div className="buyer-name">{company.name}</div>
-      <div className="buyer-lines">{addressLines(company.address).join(', ') || <span className="muted">No address on file</span>}</div>
-      <div className="buyer-meta">
-        {company.gst && <span><strong>GSTIN</strong> {company.gst}</span>}
-        {contact.map((c) => <span key={c}>{c}</span>)}
-      </div>
-      {editable && company.id && <Link to={`/admin/companies/${company.id}/edit`} target="_blank" className="buyer-edit">Edit company</Link>}
-    </div>
-  );
 }
 
 export default function CommercialInvoiceForm() {
@@ -143,41 +113,6 @@ export default function CommercialInvoiceForm() {
   useFormGuards({ isDirty, saving, formRef });
 
   const update = (changes) => setForm((f) => ({ ...f, ...changes }));
-  const setMarks = (changes) => setForm((f) => ({ ...f, marks: { ...f.marks, ...changes } }));
-
-  const selectConsignee = (companyId) => {
-    const company = companies.find((c) => c.id === companyId);
-    setForm((f) => {
-      const ship = shippingFromCompany(company);
-      return {
-        ...f,
-        consigneeId: companyId,
-        consignee: company ? snapshot(company) : null,
-        // Fill shipping details from the company, keeping anything already typed
-        destination: ship.destination || f.destination,
-        portOfDischarge: ship.portOfDischarge || f.portOfDischarge,
-        destinationPort: ship.destinationPort || f.destinationPort,
-        marks: {
-          ...f.marks,
-          name: !f.marks.name || f.marks.name === f.consignee?.name ? company?.name || '' : f.marks.name,
-          port: !f.marks.port || f.marks.port === f.destinationPort ? ship.destinationPort || f.marks.port : f.marks.port,
-        },
-      };
-    });
-  };
-
-  const selectBuyer = (companyId) => {
-    const company = companies.find((c) => c.id === companyId);
-    update({ buyerId: companyId, buyer: company ? snapshot(company) : null });
-  };
-
-  const setPackages = (value) =>
-    setForm((f) => ({
-      ...f,
-      packages: value,
-      // Keep "No. 1 to N" in step, unless it was typed by hand
-      marks: { ...f.marks, numbers: !f.marks.numbers || f.marks.numbers === packageNumbers(f.packages) ? packageNumbers(value) : f.marks.numbers },
-    }));
 
   const setItem = (index, changes) =>
     setForm((f) => ({ ...f, items: f.items.map((it, i) => (i === index ? { ...it, ...changes } : it)) }));
@@ -194,12 +129,9 @@ export default function CommercialInvoiceForm() {
     setForm((f) => ({ ...f, items: f.items.length > 1 ? f.items.filter((_, i) => i !== index) : [emptyCommercialItem()] }));
 
   const total = commercialTotal(form.items);
-  const consignee = companies.find((c) => c.id === form.consigneeId) || form.consignee;
-  const buyer = companies.find((c) => c.id === form.buyerId) || form.buyer;
   const allErrors = validate(form, usedNumbers);
   const errors = submitted ? allErrors : allErrors.invoiceNumber?.includes('already') ? { invoiceNumber: allErrors.invoiceNumber } : {};
 
-  const companyOptions = companies.map((c) => ({ value: c.id, label: c.name }));
   const productOptions = products.map((p) => ({
     value: p.id, label: p.name, searchText: [p.code, p.name, p.hsnCode].filter(Boolean).join(' ').toLowerCase(),
   }));
@@ -223,8 +155,8 @@ export default function CommercialInvoiceForm() {
       ...form,
       items,
       total: commercialTotal(items),
-      consignee: liveConsignee ? snapshot(liveConsignee) : form.consignee,
-      buyer: form.buyerSameAsConsignee ? null : liveBuyer ? snapshot(liveBuyer) : form.buyer,
+      consignee: liveConsignee ? companySnapshot(liveConsignee) : form.consignee,
+      buyer: form.buyerSameAsConsignee ? null : liveBuyer ? companySnapshot(liveBuyer) : form.buyer,
     };
   };
 
@@ -277,100 +209,9 @@ export default function CommercialInvoiceForm() {
 
       <div className="inv-layout">
         <div className="inv-main">
-          {/* 1. Invoice & PO */}
-          <section className="panel">
-            <h2 className="panel-title"><span className="step">1</span> Invoice &amp; purchase order</h2>
-            <div className="grid-2">
-              <label className="field">
-                <span>Invoice number</span>
-                <input className={`input${errors.invoiceNumber ? ' input-invalid' : ''}`} value={form.invoiceNumber}
-                  onChange={(e) => update({ invoiceNumber: e.target.value })} />
-                <FieldError message={errors.invoiceNumber} />
-              </label>
-              <label className="field">
-                <span>Invoice date</span>
-                <DateInput value={form.invoiceDate} onChange={(v) => update({ invoiceDate: v })} required />
-                <FieldError message={errors.invoiceDate} />
-              </label>
-              <label className="field">
-                <span>PO number <em className="optional">optional</em></span>
-                <input className="input" value={form.poNumber} onChange={(e) => update({ poNumber: e.target.value })} />
-              </label>
-              <label className="field">
-                <span>PO date <em className="optional">optional</em></span>
-                <DateInput value={form.poDate} onChange={(v) => update({ poDate: v })} />
-              </label>
-            </div>
-          </section>
-
-          {/* 2. Parties */}
-          <section className="panel">
-            <h2 className="panel-title"><span className="step">2</span> Consignee &amp; buyer</h2>
-            <div className="field">
-              <span>Consignee / importer</span>
-              <SearchSelect aria-label="Consignee" options={companyOptions} value={companies.some((c) => c.id === form.consigneeId) ? form.consigneeId : ''}
-                onChange={selectConsignee}
-                placeholder={form.consignee?.name && !companies.some((c) => c.id === form.consigneeId) ? `${form.consignee.name} (no longer in list — select again)` : 'Search company by name…'} />
-              <FieldError message={errors.consignee} />
-              <div className="field-help">
-                Not in the list? <Link to="/admin/companies/new" target="_blank">Add a new company</Link> — it appears here when you come back.
-                Shipping details below are filled from the company.
-              </div>
-            </div>
-            <PartyCard company={consignee} editable />
-
-            <div className="field">
-              <label className="check">
-                <input type="checkbox" checked={form.buyerSameAsConsignee}
-                  onChange={(e) => update({ buyerSameAsConsignee: e.target.checked, ...(e.target.checked ? { buyerId: '', buyer: null } : {}) })} />
-                <span>Buyer is the same as the consignee</span>
-              </label>
-            </div>
-            {!form.buyerSameAsConsignee && (
-              <>
-                <div className="field">
-                  <span>Buyer</span>
-                  <SearchSelect aria-label="Buyer" options={companyOptions} value={companies.some((c) => c.id === form.buyerId) ? form.buyerId : ''}
-                    onChange={selectBuyer} placeholder="Search buyer company…" />
-                  <FieldError message={errors.buyer} />
-                </div>
-                <PartyCard company={buyer} editable />
-              </>
-            )}
-          </section>
-
-          {/* 3. Shipping */}
-          <section className="panel">
-            <h2 className="panel-title"><span className="step">3</span> Shipping</h2>
-            <div className="grid-3">
-              <label className="field">
-                <span>Origin</span>
-                <input className="input" value={form.origin} onChange={(e) => update({ origin: e.target.value.toUpperCase() })} />
-              </label>
-              <label className="field">
-                <span>Destination</span>
-                <input className="input" value={form.destination} onChange={(e) => update({ destination: e.target.value.toUpperCase() })} placeholder="e.g. U.A.E." />
-              </label>
-              <div className="field">
-                <span>Vessel / flight no.</span>
-                <input className="input" aria-label="Vessel / flight no." value={form.vesselFlight} onChange={(e) => update({ vesselFlight: e.target.value.toUpperCase() })} />
-                <Chips options={TRANSPORT_MODES} value={form.vesselFlight} onPick={(v) => update({ vesselFlight: v })} />
-              </div>
-              <div className="field">
-                <span>Origin port</span>
-                <input className="input" aria-label="Origin port" value={form.originPort} onChange={(e) => update({ originPort: e.target.value.toUpperCase() })} />
-                <Chips options={ORIGIN_PORTS} value={form.originPort} onPick={(v) => update({ originPort: v })} />
-              </div>
-              <label className="field">
-                <span>Port of discharge</span>
-                <input className="input" value={form.portOfDischarge} onChange={(e) => update({ portOfDischarge: e.target.value.toUpperCase() })} placeholder="e.g. JEBEL ALI" />
-              </label>
-              <label className="field">
-                <span>Destination port</span>
-                <input className="input" value={form.destinationPort} onChange={(e) => update({ destinationPort: e.target.value.toUpperCase() })} />
-              </label>
-            </div>
-          </section>
+          <InvoiceDetailsSection step={1} form={form} setForm={setForm} errors={errors} />
+          <PartiesSection step={2} form={form} setForm={setForm} errors={errors} companies={companies} />
+          <ShippingSection step={3} form={form} setForm={setForm} />
 
           {/* 4. Items */}
           <section className="panel">
@@ -426,39 +267,8 @@ export default function CommercialInvoiceForm() {
             </label>
           </section>
 
-          {/* 5. Packing & marks */}
-          <section className="panel">
-            <h2 className="panel-title"><span className="step">5</span> Marks &amp; numbers</h2>
-            <div className="grid-3">
-              <label className="field">
-                <span>No. of packages</span>
-                <input type="number" min="0" className="input" value={form.packages} onChange={(e) => setPackages(e.target.value)} placeholder="e.g. 5" />
-              </label>
-            </div>
-            <div className="grid-4 field-gap">
-              <label className="field"><span>Marks</span><input className="input" value={form.marks.name} onChange={(e) => setMarks({ name: e.target.value.toUpperCase() })} /></label>
-              <label className="field"><span>Numbers</span><input className="input" value={form.marks.numbers} onChange={(e) => setMarks({ numbers: e.target.value })} placeholder="No. 1 to 5" /></label>
-              <label className="field"><span>Port</span><input className="input" value={form.marks.port} onChange={(e) => setMarks({ port: e.target.value.toUpperCase() })} /></label>
-              <label className="field"><span>Origin</span><input className="input" value={form.marks.origin} onChange={(e) => setMarks({ origin: e.target.value.toUpperCase() })} /></label>
-            </div>
-            <div className="field-help field-gap">Filled in from the consignee and package count; change anything as needed.</div>
-          </section>
-
-          {/* 6. Terms */}
-          <section className="panel">
-            <h2 className="panel-title"><span className="step">6</span> Terms &amp; LUT</h2>
-            <div className="field">
-              <span>Terms of delivery &amp; payment <em className="optional">optional</em></span>
-              <input className="input" aria-label="Terms of delivery & payment" value={form.deliveryTerms}
-                onChange={(e) => update({ deliveryTerms: e.target.value })} placeholder="e.g. C&F & 100% Against Delivery" />
-              <Chips options={DELIVERY_TERMS_PRESETS} value={form.deliveryTerms} onPick={(v) => update({ deliveryTerms: v })} />
-            </div>
-            <label className="field">
-              <span>LUT application reference number</span>
-              <input className="input" value={form.lut} onChange={(e) => update({ lut: e.target.value })} />
-              <div className="field-help">Defaults to the current LUT; update it when the LUT is renewed.</div>
-            </label>
-          </section>
+          <MarksSection step={5} form={form} setForm={setForm} />
+          <TermsSection step={6} form={form} setForm={setForm} />
         </div>
 
         {/* Summary */}

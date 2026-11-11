@@ -76,3 +76,6 @@ export function shippingFromCompany(company) {
     destinationPort: company.finalDestinationPort || company.portOfDischarge || '',
   };
 }
+
+/** "No. 1 to N" for N packages (or "No. 1" for one). */
+export const packageNumbers = (n) => (Number(n) > 0 ? (Number(n) === 1 ? 'No. 1' : `No. 1 to ${Number(n)}`) : '');

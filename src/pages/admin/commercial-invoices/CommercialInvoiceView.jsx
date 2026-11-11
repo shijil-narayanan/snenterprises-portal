@@ -1,20 +1,26 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { deleteCommercialInvoice, getCommercialInvoice } from '../../../services/commercialInvoices';
+import { listPackingLists } from '../../../services/packingLists';
 import { formatDate, formatMoney } from '../../../utils/invoice';
 import { commercialPdfFileName, downloadCommercialPdf } from '../../../utils/invoicePdf';
 import CommercialInvoiceDocument from '../../../components/CommercialInvoiceDocument';
 import DownloadPdfButton from '../../../components/DownloadPdfButton';
-import { ArrowLeftIcon, CopyIcon, EditIcon, PrintIcon, TrashIcon } from '../../../components/Icons';
+import { ArrowLeftIcon, CopyIcon, EditIcon, FileIcon, PrintIcon, TrashIcon } from '../../../components/Icons';
 
 export default function CommercialInvoiceView() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [invoice, setInvoice] = useState(undefined);
   const [error, setError] = useState('');
+  const [packingList, setPackingList] = useState(null);
 
   useEffect(() => {
     getCommercialInvoice(id).then(setInvoice).catch((e) => setError(e.message));
+    // Is there already a packing list made from this invoice?
+    listPackingLists()
+      .then((lists) => setPackingList(lists.find((l) => l.commercialInvoiceId === id) || null))
+      .catch(() => {});
   }, [id]);
 
   const handleDelete = async () => {
@@ -58,6 +64,13 @@ export default function CommercialInvoiceView() {
           <button className="btn" onClick={() => navigate(`/admin/commercial-invoices/new?from=${id}`)} title="Start a new invoice with the same consignee, shipping and items">
             <CopyIcon /> Duplicate
           </button>
+          {packingList ? (
+            <Link to={`/admin/packing-lists/${packingList.id}`} className="btn"><FileIcon /> View packing list</Link>
+          ) : (
+            <Link to={`/admin/packing-lists/new?invoice=${id}`} className="btn" title="New packing list with this invoice's details">
+              <FileIcon /> Create packing list
+            </Link>
+          )}
           <Link to={`/admin/commercial-invoices/${id}/edit`} className="btn"><EditIcon /> Edit</Link>
           <button className="btn" onClick={handlePrint}><PrintIcon /> Print</button>
           <DownloadPdfButton className="btn btn-primary" getInvoice={() => invoice} download={downloadCommercialPdf} />

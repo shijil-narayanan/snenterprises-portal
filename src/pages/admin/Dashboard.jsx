@@ -4,6 +4,7 @@ import { listTaxInvoices } from '../../services/taxInvoices';
 import { companiesService } from '../../services/companies';
 import { productsService } from '../../services/products';
 import { listCommercialInvoices } from '../../services/commercialInvoices';
+import { listPackingLists } from '../../services/packingLists';
 import { formatDate, formatMoney } from '../../utils/invoice';
 
 export default function Dashboard() {
@@ -16,6 +17,7 @@ export default function Dashboard() {
     companiesService.list().then((l) => setCounts((c) => ({ ...c, companies: l.length }))).catch(() => {});
     productsService.list().then((l) => setCounts((c) => ({ ...c, products: l.length }))).catch(() => {});
     listCommercialInvoices().then((l) => setCounts((c) => ({ ...c, commercial: l.length }))).catch(() => {});
+    listPackingLists().then((l) => setCounts((c) => ({ ...c, packing: l.length }))).catch(() => {});
   }, []);
 
   const recent = (invoices || []).slice(0, 5);
@@ -39,6 +41,11 @@ export default function Dashboard() {
           <div className="stat-label">Commercial Invoices</div>
           <div className="stat-value">{counts.commercial ?? '…'}</div>
           <Link to="/admin/commercial-invoices">View all →</Link>
+        </div>
+        <div className="card stat">
+          <div className="stat-label">Packing Lists</div>
+          <div className="stat-value">{counts.packing ?? '…'}</div>
+          <Link to="/admin/packing-lists">View all →</Link>
         </div>
         <div className="card stat">
           <div className="stat-label">Companies</div>

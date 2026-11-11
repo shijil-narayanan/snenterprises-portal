@@ -6,9 +6,10 @@ const tabs = [
   { to: '/admin', label: 'Dashboard', icon: '🏠', end: true },
   { to: '/admin/tax-invoices', label: 'Tax Invoices', icon: '🧾' },
   { to: '/admin/commercial-invoices', label: 'Commercial Invoices', icon: '📄' },
+  { to: '/admin/packing-lists', label: 'Packing Lists', icon: '📦' },
   { section: 'Master Data' },
   { to: '/admin/companies', label: 'Companies', icon: '🏢' },
-  { to: '/admin/products', label: 'Products', icon: '📦' },
+  { to: '/admin/products', label: 'Products', icon: '🏷️' },
 ];
 
 export default function AdminLayout() {

@@ -16,5 +16,8 @@ service cloud.firestore {
     match /commercialInvoices/{id} {
       allow read, write: if true;
     }
+    match /packingLists/{id} {
+      allow read, write: if true;
+    }
   }
 }

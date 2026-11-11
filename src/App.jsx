@@ -12,6 +12,9 @@ import TaxInvoiceView from './pages/admin/tax-invoices/TaxInvoiceView';
 import CommercialInvoiceList from './pages/admin/commercial-invoices/CommercialInvoiceList';
 import CommercialInvoiceForm from './pages/admin/commercial-invoices/CommercialInvoiceForm';
 import CommercialInvoiceView from './pages/admin/commercial-invoices/CommercialInvoiceView';
+import PackingListList from './pages/admin/packing-lists/PackingListList';
+import PackingListForm from './pages/admin/packing-lists/PackingListForm';
+import PackingListView from './pages/admin/packing-lists/PackingListView';
 import CompanyList from './pages/admin/companies/CompanyList';
 import CompanyForm from './pages/admin/companies/CompanyForm';
 import ProductList from './pages/admin/products/ProductList';
@@ -38,6 +41,10 @@ export default function App() {
         <Route path="commercial-invoices/new" element={<CommercialInvoiceForm />} />
         <Route path="commercial-invoices/:id" element={<CommercialInvoiceView />} />
         <Route path="commercial-invoices/:id/edit" element={<CommercialInvoiceForm />} />
+        <Route path="packing-lists" element={<PackingListList />} />
+        <Route path="packing-lists/new" element={<PackingListForm />} />
+        <Route path="packing-lists/:id" element={<PackingListView />} />
+        <Route path="packing-lists/:id/edit" element={<PackingListForm />} />
         <Route path="companies" element={<CompanyList />} />
         <Route path="companies/new" element={<CompanyForm />} />
         <Route path="companies/:id/edit" element={<CompanyForm />} />

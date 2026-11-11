@@ -13,6 +13,7 @@ Company website and internal portal for **SN Enterprises**, built with React (Vi
 | `/admin/tax-invoices/:id` | View / print a tax invoice |
 | `/admin/tax-invoices/:id/edit` | Edit a tax invoice |
 | `/admin/commercial-invoices` | Commercial (export) invoices — list, create, view/print, PDF, edit, delete |
+| `/admin/packing-lists` | Packing lists — create from a commercial invoice or from scratch, view/print, PDF, edit, delete |
 | `/admin/companies` | Companies (buyers) — list, search, add, edit, delete |
 | `/admin/products` | Products — list, search, add, edit, delete |
 
@@ -35,7 +36,7 @@ Without Firebase keys the app runs in **demo mode** and saves data in the browse
 4. `cp .env.example .env.local` and paste the values.
 5. Restart `npm run dev`. The yellow "Demo mode" banner disappears once Firestore is in use.
 
-Data is stored in the `taxInvoices`, `commercialInvoices`, `companies` and `products` collections. Development rules are in `firestore.rules`
+Data is stored in the `taxInvoices`, `commercialInvoices`, `packingLists`, `companies` and `products` collections. Development rules are in `firestore.rules`
 (open access — lock them down before going live).
 
 ## Companies & products
@@ -54,6 +55,13 @@ consignee/importer and buyer (or "same as consignee") picked from Companies, shi
 the consignee's saved export details), items (product, HSN, qty + unit, price, amount; grouped by
 HSN on the document), optional notes (printed under the items), packages and marks & numbers,
 terms of delivery & payment, and the LUT reference (default in `src/config/company.js`).
+
+## Packing list fields
+
+Same header details as the commercial invoice (invoice no./date, PO, consignee/buyer, shipping,
+marks, terms, LUT). Each item has packing rows — boxes, pieces per box, net and gross weight per box —
+from which pieces, weights, package numbers ("1 to 5") and the package count are calculated. A
+packing list can be started from a commercial invoice ("Create packing list"), which copies its details.
 
 ## Tax invoice fields
 
