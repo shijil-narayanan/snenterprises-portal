@@ -81,7 +81,13 @@ export async function buildPdf(element, fileName) {
     }
 
     pdf.setProperties({ title: fileName.replace(/\.pdf$/, '') });
-    return { fileName, pages: pages.map(({ image }) => ({ image })), save: () => pdf.save(fileName) };
+    return {
+      fileName,
+      pages: pages.map(({ image }) => ({ image })),
+      save: () => pdf.save(fileName),
+      // The PDF file as base64 (for email attachments)
+      base64: () => pdf.output('datauristring').split('base64,')[1],
+    };
   } finally {
     root.unmount();
     host.remove();

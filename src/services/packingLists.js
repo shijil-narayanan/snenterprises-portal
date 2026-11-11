@@ -65,3 +65,4 @@ export const getPackingList = service.get;
 export const createPackingList = service.create;
 export const updatePackingList = service.update;
 export const deletePackingList = service.remove;
+export const addPackingListEmailLog = service.addEmailLog;

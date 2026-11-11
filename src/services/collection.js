@@ -7,6 +7,7 @@ import {
   getDocs,
   orderBy,
   query,
+  arrayUnion,
   updateDoc,
 } from 'firebase/firestore';
 import { db, isFirebaseConfigured } from '../firebase';
@@ -82,6 +83,15 @@ export function createCollectionService(name, { toRecord = (d) => d, orderField 
         return;
       }
       await updateDoc(doc(db, name, id), record);
+    },
+
+    /** Adds an entry to the record's email history (doesn't change anything else). */
+    async addEmailLog(id, entry) {
+      if (!isFirebaseConfigured) {
+        local.write(local.read().map((r) => (r.id === id ? { ...r, emails: [...(r.emails || []), entry] } : r)));
+        return;
+      }
+      await updateDoc(doc(db, name, id), { emails: arrayUnion(entry) });
     },
 
     async remove(id) {

@@ -39,3 +39,4 @@ export const getTaxInvoice = service.get;
 export const createTaxInvoice = service.create;
 export const updateTaxInvoice = service.update;
 export const deleteTaxInvoice = service.remove;
+export const addTaxInvoiceEmailLog = service.addEmailLog;

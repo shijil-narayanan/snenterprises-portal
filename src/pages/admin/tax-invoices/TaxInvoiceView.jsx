@@ -1,17 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { deleteTaxInvoice, getTaxInvoice } from '../../../services/taxInvoices';
+import { deleteTaxInvoice, getTaxInvoice, addTaxInvoiceEmailLog } from '../../../services/taxInvoices';
 import { computeTotals, formatDate, formatMoney } from '../../../utils/invoice';
 import InvoiceDocument from '../../../components/InvoiceDocument';
 import DownloadPdfButton from '../../../components/DownloadPdfButton';
-import { ArrowLeftIcon, CopyIcon, EditIcon, PrintIcon, TrashIcon } from '../../../components/Icons';
+import { ArrowLeftIcon, CopyIcon, EditIcon, PrintIcon, TrashIcon, MailIcon } from '../../../components/Icons';
 import { AuditLine } from '../../../components/AuditInfo';
+import { buildInvoicePdf } from '../../../utils/invoicePdf';
+import EmailModal from '../../../components/EmailModal';
+import EmailHistory from '../../../components/EmailHistory';
+import { isEmailConfigured } from '../../../services/email';
 
 export default function TaxInvoiceView() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [invoice, setInvoice] = useState(undefined);
   const [error, setError] = useState('');
+  const [emailOpen, setEmailOpen] = useState(false);
 
   useEffect(() => {
     getTaxInvoice(id).then(setInvoice).catch((e) => setError(e.message));
@@ -24,6 +29,19 @@ export default function TaxInvoiceView() {
       navigate('/tax-invoices', { state: { flash: `Invoice ${invoice.invoiceNumber} deleted` } });
     } catch (e) {
       setError(e.message);
+    }
+  };
+
+  const closeEmail = useCallback(() => setEmailOpen(false), []);
+  // After a successful send: save it in the document's email history and show it
+  const handleEmailSent = async (entry) => {
+    setEmailOpen(false);
+    setInvoice((d) => ({ ...d, emails: [...(d.emails || []), entry] }));
+    navigate(`${window.location.pathname}${window.location.search}`, { replace: true, state: { flash: `Email sent to ${entry.to.join(', ')}` } });
+    try {
+      await addTaxInvoiceEmailLog(id, entry);
+    } catch {
+      // the email went out; only the history note failed to save
     }
   };
 
@@ -57,12 +75,16 @@ export default function TaxInvoiceView() {
             {invoice.poCompany || 'No company'} · {formatDate(invoice.invoiceDate)} · {formatMoney(totals.grandTotal, invoice.currency)}
           </p>
           <AuditLine record={invoice} />
+          <EmailHistory emails={invoice.emails} />
         </div>
         <div className="page-head-actions">
           <button className="btn" onClick={() => navigate(`/tax-invoices/new?from=${id}`)} title="Start a new invoice with the same buyer and items">
             <CopyIcon /> Duplicate
           </button>
           <Link to={`/tax-invoices/${id}/edit`} className="btn"><EditIcon /> Edit</Link>
+          {isEmailConfigured && (
+            <button className="btn" onClick={() => setEmailOpen(true)} title="Email the PDF"><MailIcon /> Email</button>
+          )}
           <button className="btn" onClick={handlePrint}><PrintIcon /> Print</button>
           <DownloadPdfButton className="btn btn-primary" getInvoice={() => invoice} />
           <button className="btn btn-danger-outline" onClick={handleDelete} title="Delete invoice"><TrashIcon /> Delete</button>
@@ -70,6 +92,7 @@ export default function TaxInvoiceView() {
       </div>
 
       <InvoiceDocument invoice={invoice} />
+      {emailOpen && <EmailModal kind="tax" doc={invoice} build={buildInvoicePdf} onClose={closeEmail} onSent={handleEmailSent} />}
     </>
   );
 }

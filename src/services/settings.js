@@ -26,6 +26,9 @@ function toRecord(data) {
       swiftCode: str(b.swiftCode).toUpperCase(), branch: str(b.branch),
     },
     lut: str(data.lut),
+    // Email: the "send from" address must be verified in Brevo
+    senderEmail: str(data.senderEmail).toLowerCase(),
+    replyTo: str(data.replyTo).toLowerCase(),
   };
 }
 

@@ -1,0 +1,16 @@
+{
+  "name": "sn-enterprises-email-worker",
+  "private": true,
+  "description": "Cloudflare Worker that emails PDFs via Brevo for signed-in SN Enterprises users",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "jose": "^6.2.17"
+  },
+  "devDependencies": {
+    "wrangler": "^4.160.0"
+  },
+  "type": "module"
+}

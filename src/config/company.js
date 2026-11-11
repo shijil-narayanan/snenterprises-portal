@@ -23,4 +23,7 @@ export const COMPANY = {
   },
   // Letter of Undertaking for exports; renewed every financial year. Default for new export documents.
   lut: 'AD270426023252E DT. 10.04.2026',
+  // Email (sent through Brevo): the sender must be verified in Brevo; blank = use `email` above
+  senderEmail: '',
+  replyTo: '',
 };

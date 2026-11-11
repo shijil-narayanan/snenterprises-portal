@@ -17,6 +17,7 @@ const editable = (c) => ({
   mobile: c.mobile || '', phone: c.phone || '', email: c.email || '',
   bankDetails: { bankName: '', accountNumber: '', ifsc: '', swiftCode: '', branch: '', ...c.bankDetails },
   lut: c.lut || '',
+  senderEmail: c.senderEmail || '', replyTo: c.replyTo || '',
 });
 
 function validate(f) {
@@ -24,6 +25,8 @@ function validate(f) {
   if (!f.name.trim()) e.name = 'Company name is required';
   if (f.gst && !GSTIN_PATTERN.test(f.gst)) e.gst = 'GSTIN should be 15 characters, e.g. 27ABCDE1234F1Z5';
   if (f.email && !EMAIL_PATTERN.test(f.email)) e.email = 'Enter a valid email address';
+  if (f.senderEmail && !EMAIL_PATTERN.test(f.senderEmail)) e.senderEmail = 'Enter a valid email address';
+  if (f.replyTo && !EMAIL_PATTERN.test(f.replyTo)) e.replyTo = 'Enter a valid email address';
   if (f.bankDetails.ifsc && !IFSC_PATTERN.test(f.bankDetails.ifsc)) e.ifsc = 'IFSC is 11 characters, e.g. HDFC0001425';
   if (f.bankDetails.swiftCode && !SWIFT_PATTERN.test(f.bankDetails.swiftCode)) e.swiftCode = 'SWIFT is 8 or 11 characters, e.g. HDFCINBBXXX';
   if (f.bankDetails.accountNumber && !/^\d{6,20}$/.test(f.bankDetails.accountNumber)) e.accountNumber = 'Account number should be 6–20 digits';
@@ -186,6 +189,17 @@ export default function CompanySettings() {
             <h2 className="panel-title"><span className="step">5</span> Exports</h2>
             <Field label="LUT application reference number" value={form.lut} onChange={set('lut')}
               help="Letter of Undertaking — renewed every financial year. New commercial invoices and packing lists start with this; existing ones keep theirs." />
+          </section>
+
+          <section className="panel">
+            <h2 className="panel-title"><span className="step">6</span> Email</h2>
+            <div className="grid-2">
+              <Field label="Send emails from" optional type="email" value={form.senderEmail} onChange={set('senderEmail')} error={errors.senderEmail}
+                placeholder={form.email || 'accounts@yourdomain.com'}
+                help="Must be a verified sender in your Brevo account. Leave empty to use the company email above." />
+              <Field label="Replies go to" optional type="email" value={form.replyTo} onChange={set('replyTo')} error={errors.replyTo}
+                placeholder={form.senderEmail || form.email} help="Leave empty to receive replies at the sending address." />
+            </div>
           </section>
 
           <section className="panel">

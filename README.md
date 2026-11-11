@@ -89,6 +89,32 @@ One-time setup in the Firebase console:
 For local testing you can run the Firebase emulators and point the app at them with
 `VITE_AUTH_EMULATOR=http://127.0.0.1:9099` and `VITE_FIRESTORE_EMULATOR=127.0.0.1:8080`.
 
+## Emailing PDFs (Brevo + Cloudflare Worker, all free plans)
+
+Invoices and packing lists have an **Email** button that sends the PDF as an attachment. Sending goes
+through a tiny Cloudflare Worker (`email-worker/`) so the Brevo API key never reaches the browser; the
+Worker only accepts requests from signed-in users of this Firebase project and from the allowed websites.
+
+One-time setup:
+
+1. **Brevo** (free: 300 emails/day) — create an account at brevo.com, then
+   - *Senders, Domains & Dedicated IPs → Senders*: add and verify the address you'll send from;
+   - *SMTP & API → API Keys*: create an API key (keep it secret).
+2. **Cloudflare** (free, no card) — create an account at cloudflare.com, then from the project folder:
+   ```bash
+   cd email-worker && npm install
+   npx wrangler login
+   npx wrangler secret put BREVO_API_KEY     # paste the Brevo key when asked
+   npx wrangler deploy                       # prints the Worker address
+   ```
+3. Put the printed address in `.env.local`: `VITE_EMAIL_API_URL=https://sn-enterprises-email.<you>.workers.dev`,
+   then `npm run deploy`.
+4. In the portal, **Settings → Email**: set *Send emails from* to the Brevo-verified address (and optionally
+   *Replies go to*).
+
+If you add a custom domain for the portal, add it to `ALLOWED_ORIGINS` in `email-worker/wrangler.toml` and run
+`npm run deploy:email`. Each send is recorded on the document ("Emailed to … by … on …").
+
 ## Deploying to Firebase Hosting
 
 One-time setup on your computer:

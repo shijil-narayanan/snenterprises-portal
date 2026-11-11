@@ -1,19 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { deleteCommercialInvoice, getCommercialInvoice } from '../../../services/commercialInvoices';
+import { deleteCommercialInvoice, getCommercialInvoice, addCommercialInvoiceEmailLog } from '../../../services/commercialInvoices';
 import { listPackingLists } from '../../../services/packingLists';
 import { formatDate, formatMoney } from '../../../utils/invoice';
-import { commercialPdfFileName, downloadCommercialPdf } from '../../../utils/invoicePdf';
+import { commercialPdfFileName, downloadCommercialPdf, buildCommercialPdf } from '../../../utils/invoicePdf';
 import CommercialInvoiceDocument from '../../../components/CommercialInvoiceDocument';
 import DownloadPdfButton from '../../../components/DownloadPdfButton';
-import { ArrowLeftIcon, BoxIcon, CopyIcon, EditIcon, PrintIcon, TrashIcon } from '../../../components/Icons';
+import { ArrowLeftIcon, BoxIcon, CopyIcon, EditIcon, PrintIcon, TrashIcon, MailIcon } from '../../../components/Icons';
 import { AuditLine } from '../../../components/AuditInfo';
+import EmailModal from '../../../components/EmailModal';
+import EmailHistory from '../../../components/EmailHistory';
+import { isEmailConfigured } from '../../../services/email';
 
 export default function CommercialInvoiceView() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [invoice, setInvoice] = useState(undefined);
   const [error, setError] = useState('');
+  const [emailOpen, setEmailOpen] = useState(false);
   const [packingList, setPackingList] = useState(null);
 
   useEffect(() => {
@@ -31,6 +35,19 @@ export default function CommercialInvoiceView() {
       navigate('/commercial-invoices', { state: { flash: `Invoice ${invoice.invoiceNumber} deleted` } });
     } catch (e) {
       setError(e.message);
+    }
+  };
+
+  const closeEmail = useCallback(() => setEmailOpen(false), []);
+  // After a successful send: save it in the document's email history and show it
+  const handleEmailSent = async (entry) => {
+    setEmailOpen(false);
+    setInvoice((d) => ({ ...d, emails: [...(d.emails || []), entry] }));
+    navigate(`${window.location.pathname}${window.location.search}`, { replace: true, state: { flash: `Email sent to ${entry.to.join(', ')}` } });
+    try {
+      await addCommercialInvoiceEmailLog(id, entry);
+    } catch {
+      // the email went out; only the history note failed to save
     }
   };
 
@@ -61,6 +78,7 @@ export default function CommercialInvoiceView() {
             {invoice.consignee?.name || 'No consignee'} · {formatDate(invoice.invoiceDate)} · {formatMoney(invoice.total, invoice.currency)}
           </p>
           <AuditLine record={invoice} />
+          <EmailHistory emails={invoice.emails} />
         </div>
         <div className="page-head-actions">
           <button className="btn" onClick={() => navigate(`/commercial-invoices/new?from=${id}`)} title="Start a new invoice with the same consignee, shipping and items">
@@ -74,12 +92,16 @@ export default function CommercialInvoiceView() {
             </Link>
           )}
           <Link to={`/commercial-invoices/${id}/edit`} className="btn"><EditIcon /> Edit</Link>
+          {isEmailConfigured && (
+            <button className="btn" onClick={() => setEmailOpen(true)} title="Email the PDF"><MailIcon /> Email</button>
+          )}
           <button className="btn" onClick={handlePrint}><PrintIcon /> Print</button>
           <DownloadPdfButton className="btn btn-primary" getInvoice={() => invoice} download={downloadCommercialPdf} />
           <button className="btn btn-danger-outline" onClick={handleDelete}><TrashIcon /> Delete</button>
         </div>
       </div>
       <CommercialInvoiceDocument invoice={invoice} />
+      {emailOpen && <EmailModal kind="commercial" doc={invoice} build={buildCommercialPdf} onClose={closeEmail} onSent={handleEmailSent} />}
     </>
   );
 }

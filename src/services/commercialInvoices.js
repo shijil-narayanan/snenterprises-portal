@@ -52,3 +52,4 @@ export const getCommercialInvoice = service.get;
 export const createCommercialInvoice = service.create;
 export const updateCommercialInvoice = service.update;
 export const deleteCommercialInvoice = service.remove;
+export const addCommercialInvoiceEmailLog = service.addEmailLog;

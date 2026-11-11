@@ -1,0 +1,11 @@
+# Cloudflare Worker that sends invoice / packing-list PDFs by email through Brevo.
+# Free Cloudflare plan is enough. The Brevo API key is a secret:  npx wrangler secret put BREVO_API_KEY
+name = "sn-enterprises-email"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+# Only signed-in users of this Firebase project may send
+FIREBASE_PROJECT_ID = "sn-enterprises-portal"
+# Websites allowed to call this Worker (comma-separated)
+ALLOWED_ORIGINS = "https://sn-enterprises-portal.web.app,https://sn-enterprises-portal.firebaseapp.com,http://localhost:5173"
