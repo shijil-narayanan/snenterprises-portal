@@ -71,7 +71,7 @@ export default function Login() {
     <div className="login-page">
       <form className="login-card" onSubmit={handleSubmit} noValidate>
         <img src={logo} alt="SN Enterprises" className="login-logo" />
-        <h1>Sign in to the portal</h1>
+        <h1>Sign in to SN Enterprises</h1>
         <p className="muted">For SN Enterprises staff only.</p>
 
         {error && <div className="alert alert-error" role="alert">{error}</div>}

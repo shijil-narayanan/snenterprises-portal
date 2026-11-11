@@ -509,3 +509,32 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
 .settings-bank { border-top: 1px solid var(--border); padding-top: 12px; }
 .settings-notes { margin: 0 0 16px; padding-left: 18px; font-size: 0.875rem; color: #374151; line-height: 1.5; }
 .settings-notes li + li { margin-top: 6px; }
+
+/* Collapsible sidebar */
+.sidebar { transition: width 0.2s ease, padding 0.2s ease; overflow: hidden; }
+.sidebar-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-bottom: 20px; }
+.sidebar-top .sidebar-brand { padding: 0 8px; white-space: nowrap; }
+.sidebar-toggle { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; border: 0; background: transparent; color: #c9d6ea; cursor: pointer; }
+.sidebar-toggle:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.sidebar-link { align-items: center; white-space: nowrap; }
+.sidebar-icon { width: 20px; text-align: center; flex-shrink: 0; }
+.sidebar-signout { display: inline-flex; align-items: center; gap: 6px; }
+
+.sidebar-closed .sidebar { width: 68px; padding-left: 10px; padding-right: 10px; }
+.sidebar-closed .sidebar-text { display: none; }
+.sidebar-closed .sidebar-top { flex-direction: column-reverse; gap: 12px; }
+.sidebar-closed .sidebar-top .sidebar-brand { padding: 0; }
+.sidebar-closed .sidebar-link { justify-content: center; padding: 10px 0; }
+.sidebar-closed .sidebar-section { padding: 10px 0 2px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 8px; }
+.sidebar-closed .sidebar-user { padding: 12px 0 4px; display: flex; justify-content: center; }
+.sidebar-closed .sidebar-signout { padding: 7px 9px; margin-top: 0; }
+
+@media screen and (max-width: 800px) {
+  .sidebar { transition: none; }
+  .sidebar-top { padding-bottom: 8px; }
+  /* On phones the sidebar sits on top; closing it leaves just the brand bar */
+  .sidebar-closed .sidebar { width: 100%; padding: 12px 16px; }
+  .sidebar-closed .sidebar-top { flex-direction: row; }
+  .sidebar-closed .sidebar-top .sidebar-text { display: inline; }
+  .sidebar-closed .sidebar nav, .sidebar-closed .sidebar-user { display: none; }
+}

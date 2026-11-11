@@ -1,10 +1,21 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Flash from './Flash';
 import { ensureCompanySettings } from '../services/settings';
 import { auth, isFirebaseConfigured } from '../firebase';
 import { useAuth } from '../auth/useAuth';
+import { LogoutIcon, SidebarIcon } from './Icons';
+
+// Sidebar open/closed is remembered per browser (open by default)
+const SIDEBAR_KEY = 'sn.sidebarOpen';
+const readSidebarOpen = () => {
+  try {
+    return localStorage.getItem(SIDEBAR_KEY) !== 'false';
+  } catch {
+    return true;
+  }
+};
 
 const tabs = [
   { to: '/admin', label: 'Dashboard', icon: '🏠', end: true },
@@ -22,6 +33,17 @@ export default function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [open, setOpen] = useState(readSidebarOpen);
+
+  const toggleSidebar = () =>
+    setOpen((o) => {
+      try {
+        localStorage.setItem(SIDEBAR_KEY, String(!o));
+      } catch {
+        // storage unavailable: the choice just isn't remembered
+      }
+      return !o;
+    });
 
   // Load the company details saved in Settings (used on invoices and PDFs)
   useEffect(() => {
@@ -33,26 +55,35 @@ export default function AdminLayout() {
     navigate('/login', { replace: true });
   };
   return (
-    <div className="admin">
-      <aside className="sidebar no-print">
-        <Link to="/admin" className="sidebar-brand">
-          <span className="brand-mark">SN</span> Portal
-        </Link>
+    <div className={`admin${open ? '' : ' sidebar-closed'}`}>
+      <aside className="sidebar no-print" aria-label="Main navigation">
+        <div className="sidebar-top">
+          <Link to="/admin" className="sidebar-brand" title="SN Enterprises">
+            <span className="brand-mark">SN</span> <span className="sidebar-text">Enterprises</span>
+          </Link>
+          <button type="button" className="sidebar-toggle" onClick={toggleSidebar}
+            aria-expanded={open} aria-label={open ? 'Close sidebar' : 'Open sidebar'} title={open ? 'Close sidebar' : 'Open sidebar'}>
+            <SidebarIcon size={18} />
+          </button>
+        </div>
         <nav>
           {tabs.map((t) =>
             t.section ? (
-              <div key={t.section} className="sidebar-section">{t.section}</div>
+              <div key={t.section} className="sidebar-section"><span className="sidebar-text">{t.section}</span></div>
             ) : (
-              <NavLink key={t.to} to={t.to} end={t.end} className="sidebar-link">
-                <span aria-hidden="true">{t.icon}</span> {t.label}
+              <NavLink key={t.to} to={t.to} end={t.end} className="sidebar-link" title={open ? undefined : t.label}>
+                <span aria-hidden="true" className="sidebar-icon">{t.icon}</span>
+                <span className="sidebar-text">{t.label}</span>
               </NavLink>
             ),
           )}
         </nav>
         {user && (
           <div className="sidebar-user">
-            <div className="sidebar-user-email" title={user.email}>{user.email}</div>
-            <button type="button" className="sidebar-signout" onClick={handleSignOut}>Sign out</button>
+            <div className="sidebar-user-email sidebar-text" title={user.email}>{user.email}</div>
+            <button type="button" className="sidebar-signout" onClick={handleSignOut} title={`Sign out (${user.email})`}>
+              <LogoutIcon size={14} /> <span className="sidebar-text">Sign out</span>
+            </button>
           </div>
         )}
       </aside>

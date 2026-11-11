@@ -25,7 +25,7 @@ export default function Dashboard() {
   return (
     <>
       <div className="welcome card">
-        <h1>Welcome to SN Enterprises Portal</h1>
+        <h1>Welcome to SN Enterprises</h1>
         <p>Manage your tax invoices, commercial invoices and other business documents from one place.</p>
       </div>
 

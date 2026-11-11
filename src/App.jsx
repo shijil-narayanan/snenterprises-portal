@@ -21,11 +21,11 @@ import CompanySettings from './pages/admin/settings/CompanySettings';
 export default function App() {
   return (
     <Routes>
-      {/* Admin-only app: the root opens the portal (sign-in first if needed) */}
+      {/* Admin-only app: the root opens the dashboard (sign-in first if needed) */}
       <Route index element={<Navigate to="/admin" replace />} />
       <Route path="login" element={<Login />} />
 
-      {/* Portal: signed-in users only */}
+      {/* Admin pages: signed-in users only */}
       <Route path="admin" element={<RequireAuth><AdminLayout /></RequireAuth>}>
         <Route index element={<Dashboard />} />
         <Route path="tax-invoices" element={<TaxInvoiceList />} />
