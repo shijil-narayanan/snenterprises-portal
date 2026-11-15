@@ -5,6 +5,7 @@ import { GSTIN_PATTERN, gstStateName } from '../../../config/gstStates';
 import DocumentHeader from '../../../components/DocumentHeader';
 import { formatDateTime, userLabel } from '../../../utils/audit';
 import useFormGuards from '../../../hooks/useFormGuards';
+import { aadhaarDigits, formatAadhaar, isValidAadhaar } from '../../../utils/aadhaar';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const IFSC_PATTERN = /^[A-Z]{4}0[A-Z0-9]{6}$/;
@@ -12,7 +13,7 @@ const SWIFT_PATTERN = /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
 
 // Only the editable fields (the store also carries bookkeeping like updatedAt)
 const editable = (c) => ({
-  name: c.name || '', gst: c.gst || '', iec: c.iec || '',
+  name: c.name || '', gst: c.gst || '', iec: c.iec || '', aadhaar: formatAadhaar(c.aadhaar),
   address: { addressline1: '', addressline2: '', city: '', state: '', pincode: '', country: '', ...c.address },
   mobile: c.mobile || '', phone: c.phone || '', email: c.email || '',
   bankDetails: { bankName: '', accountNumber: '', ifsc: '', swiftCode: '', branch: '', ...c.bankDetails },
@@ -24,6 +25,9 @@ function validate(f) {
   const e = {};
   if (!f.name.trim()) e.name = 'Company name is required';
   if (f.gst && !GSTIN_PATTERN.test(f.gst)) e.gst = 'GSTIN should be 15 characters, e.g. 27ABCDE1234F1Z5';
+  if (f.aadhaar && !isValidAadhaar(f.aadhaar)) {
+    e.aadhaar = aadhaarDigits(f.aadhaar).length !== 12 ? 'Aadhaar number has 12 digits' : 'This isn’t a valid Aadhaar number — please check the digits';
+  }
   if (f.email && !EMAIL_PATTERN.test(f.email)) e.email = 'Enter a valid email address';
   if (f.senderEmail && !EMAIL_PATTERN.test(f.senderEmail)) e.senderEmail = 'Enter a valid email address';
   if (f.replyTo && !EMAIL_PATTERN.test(f.replyTo)) e.replyTo = 'Enter a valid email address';
@@ -57,6 +61,7 @@ export default function CompanySettings() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [flash, setFlash] = useState('');
+  const [showAadhaar, setShowAadhaar] = useState(false);
 
   useEffect(() => {
     loadCompanySettings()
@@ -150,6 +155,18 @@ export default function CompanySettings() {
               <Field className="span-2" label="Company name" value={form.name} onChange={set('name')} error={errors.name} />
               <Field label="GSTIN" optional mono maxLength={15} value={form.gst} onChange={(e) => setForm((f) => ({ ...f, gst: e.target.value.toUpperCase().replace(/\s/g, '') }))} error={errors.gst} help={gstHelp} />
               <Field label="IEC (Import Export Code)" optional mono value={form.iec} onChange={set('iec')} help="Shown on commercial invoices and packing lists" />
+              <label className="field">
+                <span>Aadhaar number (proprietor)<em className="optional">optional</em></span>
+                <div className="password-wrap">
+                  <input className={`input mono-input${errors.aadhaar ? ' input-invalid' : ''}`} type={showAadhaar ? 'text' : 'password'}
+                    inputMode="numeric" autoComplete="off" maxLength={14} placeholder="1234 5678 9012" aria-label="Aadhaar number"
+                    value={form.aadhaar} onChange={(e) => setForm((f) => ({ ...f, aadhaar: formatAadhaar(e.target.value) }))} />
+                  <button type="button" className="password-toggle" onClick={() => setShowAadhaar((v) => !v)}
+                    aria-label={showAadhaar ? 'Hide Aadhaar number' : 'Show Aadhaar number'}>{showAadhaar ? 'Hide' : 'Show'}</button>
+                </div>
+                <FieldError message={errors.aadhaar} />
+                {!errors.aadhaar && <div className="field-help">Kept private: stored only here, not printed on invoices.</div>}
+              </label>
             </div>
           </section>
 

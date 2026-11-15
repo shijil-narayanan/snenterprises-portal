@@ -36,6 +36,7 @@ export function useCompany() {
 
 /** The current details to store on an invoice (without Settings bookkeeping). */
 export function sellerSnapshot() {
-  const { updatedAt: _a, updatedBy: _b, ...company } = current;
+  // Private details (Aadhaar) are not copied onto invoices
+  const { updatedAt: _a, updatedBy: _b, aadhaar: _c, ...company } = current;
   return company;
 }

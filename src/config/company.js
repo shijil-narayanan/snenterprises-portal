@@ -14,6 +14,8 @@ export const COMPANY = {
   email: 'snenterprise401@yahoo.com',
   iec: '0313007845',
   gst: '27ACYPA2969C1ZD',
+  // Proprietor's Aadhaar number — entered in Settings only (never stored in code), not printed on documents
+  aadhaar: '',
   bankDetails: {
     bankName: 'HDFC Bank',
     accountNumber: '14257630001014',

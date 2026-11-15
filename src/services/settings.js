@@ -14,6 +14,7 @@ function toRecord(data) {
     name: str(data.name),
     gst: str(data.gst).toUpperCase(),
     iec: str(data.iec),
+    aadhaar: str(data.aadhaar).replace(/\D/g, '').slice(0, 12),
     address: {
       addressline1: str(a.addressline1), addressline2: str(a.addressline2), city: str(a.city),
       state: str(a.state), pincode: str(a.pincode), country: str(a.country),
