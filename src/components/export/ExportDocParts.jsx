@@ -1,4 +1,5 @@
 import { useCompany } from '../../config/companySettings';
+import SignatureBlock from '../SignatureBlock';
 import { addressLines, formatDate } from '../../utils/invoice';
 
 // Shared blocks of the export documents (commercial invoice and packing list),
@@ -96,10 +97,7 @@ export function ExportMarksAndFoot({ doc: invoice }) {
             <div>{invoice.lut || '—'}</div>
           </div>
         </div>
-        <div className="ci-sign">
-          <div>For {company.name}</div>
-          <div className="ci-strong">Authorised Signatory</div>
-        </div>
+        <SignatureBlock companyName={company.name} variant="export" />
       </div>
     </>
   );

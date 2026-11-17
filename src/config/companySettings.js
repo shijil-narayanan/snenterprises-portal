@@ -36,7 +36,8 @@ export function useCompany() {
 
 /** The current details to store on an invoice (without Settings bookkeeping). */
 export function sellerSnapshot() {
-  // Private details (Aadhaar) are not copied onto invoices
-  const { updatedAt: _a, updatedBy: _b, aadhaar: _c, ...company } = current;
+  // Not copied onto invoices: private details (Aadhaar), and the signature/stamp images
+  // (documents always use the ones in Settings, which keeps each invoice small)
+  const { updatedAt: _a, updatedBy: _b, aadhaar: _c, signatureImage: _d, stampImage: _e, signOnDocuments: _f, ...company } = current;
   return company;
 }

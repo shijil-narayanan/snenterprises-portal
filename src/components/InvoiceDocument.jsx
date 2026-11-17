@@ -3,6 +3,7 @@ import { TAX_TYPES } from '../config/catalog';
 import { addressLines, amountInWords, computeTotals, formatDate, formatMoney } from '../utils/invoice';
 import InvoiceTotals from '../pages/admin/tax-invoices/InvoiceTotals';
 import DocumentHeader from './DocumentHeader';
+import SignatureBlock from './SignatureBlock';
 
 /** The printable tax invoice. Used on the invoice page, for printing and for PDF downloads. */
 export default function InvoiceDocument({ invoice, fillPage = false }) {
@@ -91,10 +92,7 @@ export default function InvoiceDocument({ invoice, fillPage = false }) {
 
       <footer className="paper-foot">
         <div className="paper-note">This is a computer-generated invoice.</div>
-        <div className="paper-sign">
-          <div>For <strong>{company.name}</strong></div>
-          <div className="paper-sign-line">Authorised Signatory</div>
-        </div>
+        <SignatureBlock companyName={company.name} variant="tax" />
       </footer>
     </article>
   );

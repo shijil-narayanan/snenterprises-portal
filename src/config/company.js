@@ -28,4 +28,8 @@ export const COMPANY = {
   // Email (sent through Brevo): the sender must be verified in Brevo; blank = use `email` above
   senderEmail: '',
   replyTo: '',
+  // Signature & stamp images (uploaded in Settings) printed above "Authorised Signatory"
+  signatureImage: '',
+  stampImage: '',
+  signOnDocuments: true,
 };

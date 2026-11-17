@@ -2,6 +2,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db, isFirebaseConfigured } from '../firebase';
 import { getCompany, mergeCompany, setCompany } from '../config/companySettings';
 import { currentActor } from './actor';
+import { isSignatureDataUrl } from '../utils/signatureImage';
 
 const LOCAL_KEY = 'sn.settings.company';
 const str = (v) => (v ?? '').toString().trim();
@@ -30,6 +31,10 @@ function toRecord(data) {
     // Email: the "send from" address must be verified in Brevo
     senderEmail: str(data.senderEmail).toLowerCase(),
     replyTo: str(data.replyTo).toLowerCase(),
+    // Small PNG images prepared in the browser (see utils/signatureImage)
+    signatureImage: isSignatureDataUrl(data.signatureImage) ? data.signatureImage : '',
+    stampImage: isSignatureDataUrl(data.stampImage) ? data.stampImage : '',
+    signOnDocuments: data.signOnDocuments !== false,
   };
 }
 

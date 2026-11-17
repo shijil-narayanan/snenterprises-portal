@@ -49,7 +49,9 @@ these collections; the item's HSN code is filled in automatically. Each invoice 
 buyer's details, so editing or deleting a company later doesn't change existing invoices.
 
 SN Enterprises' own details (address, GSTIN, IEC, contact, bank, LUT) are edited on the **Settings** page and
-stored in Firestore (`settings/company`); `src/config/company.js` only holds the starting values. Each invoice and
+stored in Firestore (`settings/company`); `src/config/company.js` only holds the starting values. Settings also holds the
+signature and company-stamp images (uploaded as photos; the white background is removed and they are resized) that are
+printed above "Authorised Signatory" on all documents when switched on. Each invoice and
 packing list saves a copy of these details when it is saved, so later changes don't alter documents already issued.
 
 ## Commercial invoice fields

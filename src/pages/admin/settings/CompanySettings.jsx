@@ -6,6 +6,7 @@ import DocumentHeader from '../../../components/DocumentHeader';
 import { formatDateTime, userLabel } from '../../../utils/audit';
 import useFormGuards from '../../../hooks/useFormGuards';
 import { aadhaarDigits, formatAadhaar, isValidAadhaar } from '../../../utils/aadhaar';
+import { prepareSignatureImage } from '../../../utils/signatureImage';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const IFSC_PATTERN = /^[A-Z]{4}0[A-Z0-9]{6}$/;
@@ -19,6 +20,7 @@ const editable = (c) => ({
   bankDetails: { bankName: '', accountNumber: '', ifsc: '', swiftCode: '', branch: '', ...c.bankDetails },
   lut: c.lut || '',
   senderEmail: c.senderEmail || '', replyTo: c.replyTo || '',
+  signatureImage: c.signatureImage || '', stampImage: c.stampImage || '', signOnDocuments: c.signOnDocuments !== false,
 });
 
 function validate(f) {
@@ -47,6 +49,47 @@ function Field({ label, optional, error, help, className = '', mono, ...input })
       <FieldError message={error} />
       {help && !error && <div className="field-help">{help}</div>}
     </label>
+  );
+}
+
+/** Upload box for the signature or stamp image, with preview, replace and remove. */
+function ImageUpload({ label, help, value, onChange, maxWidth, maxHeight, inputLabel }) {
+  const [removeBackground, setRemoveBackground] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const handleFile = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setBusy(true);
+    setError('');
+    try {
+      onChange(await prepareSignatureImage(file, { maxWidth, maxHeight, removeBackground }));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="field">
+      <span>{label}<em className="optional">optional</em></span>
+      <div className={`sig-upload${value ? ' has-image' : ''}`}>
+        {value ? <img src={value} alt={`${label} preview`} /> : <span className="muted small">{busy ? 'Preparing…' : 'No image yet'}</span>}
+      </div>
+      <div className="sig-upload-actions">
+        <label className="btn btn-sm">
+          {value ? 'Replace…' : 'Upload image…'}
+          <input type="file" accept="image/png,image/jpeg,image/webp" onChange={handleFile} hidden aria-label={inputLabel} />
+        </label>
+        {value && <button type="button" className="btn btn-sm btn-danger-outline" onClick={() => onChange('')}>Remove</button>}
+        <label className="check small-check">
+          <input type="checkbox" checked={removeBackground} onChange={(e) => setRemoveBackground(e.target.checked)} />
+          <span>Remove white background</span>
+        </label>
+      </div>
+      {error ? <div className="field-error">{error}</div> : <div className="field-help">{help}</div>}
+    </div>
   );
 }
 
@@ -217,6 +260,38 @@ export default function CompanySettings() {
               <Field label="Replies go to" optional type="email" value={form.replyTo} onChange={set('replyTo')} error={errors.replyTo}
                 placeholder={form.senderEmail || form.email} help="Leave empty to receive replies at the sending address." />
             </div>
+          </section>
+
+          <section className="panel">
+            <h2 className="panel-title"><span className="step">7</span> Signature &amp; stamp</h2>
+            <div className="grid-2">
+              <ImageUpload label="Signature" inputLabel="Upload signature" value={form.signatureImage} maxWidth={600} maxHeight={240}
+                onChange={(v) => setForm((f) => ({ ...f, signatureImage: v }))}
+                help="Sign on plain white paper with a dark pen, then take a clear, straight photo or scan." />
+              <ImageUpload label="Company stamp / seal" inputLabel="Upload stamp" value={form.stampImage} maxWidth={360} maxHeight={360}
+                onChange={(v) => setForm((f) => ({ ...f, stampImage: v }))}
+                help="A photo or scan of the stamp on white paper." />
+            </div>
+            <label className="check">
+              <input type="checkbox" checked={form.signOnDocuments} aria-label="Print signature on documents"
+                onChange={(e) => setForm((f) => ({ ...f, signOnDocuments: e.target.checked }))} />
+              <span>Print the signature and stamp above “Authorised Signatory” on tax invoices, commercial invoices and packing lists</span>
+            </label>
+            {(form.signatureImage || form.stampImage) && (
+              <div className="sig-preview">
+                <div className="paper-label">Preview</div>
+                <div className="sig-preview-box">
+                  <div>For <strong>{form.name || 'Company'}</strong></div>
+                  {form.signOnDocuments ? (
+                    <div className="sig-marks">
+                      {form.stampImage && <img src={form.stampImage} alt="" className="sig-stamp" />}
+                      {form.signatureImage && <img src={form.signatureImage} alt="" className="sig-image" />}
+                    </div>
+                  ) : <div className="muted small sig-off">Not printed (switched off)</div>}
+                  <div className="paper-sign-line signed">Authorised Signatory</div>
+                </div>
+              </div>
+            )}
           </section>
 
           <section className="panel">
