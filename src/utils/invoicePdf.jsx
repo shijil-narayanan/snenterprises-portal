@@ -4,6 +4,7 @@ import InvoiceDocument from '../components/InvoiceDocument';
 import { ensureCompanySettings } from '../services/settings';
 import CommercialInvoiceDocument from '../components/CommercialInvoiceDocument';
 import PackingListDocument from '../components/PackingListDocument';
+import ExportValueDeclarationDocument from '../components/ExportValueDeclarationDocument';
 
 const A4 = { width: 210, height: 297, margin: 10 }; // mm
 
@@ -11,6 +12,7 @@ const A4 = { width: 210, height: 297, margin: 10 }; // mm
 const BREAK_SELECTOR = [
   '.ci-grid', '.ci-row', '.ci-foot', '.pl-breakdown-wrap', '.pl-notes', // export documents
   '.paper-boxes', '.paper-table tr', '.paper-bottom', '.paper-foot', // tax invoice
+  '.evd-row', '.evd-declaration', '.evd-foot', // export value declaration
 ].join(', ');
 
 // Characters not allowed in file names become "-" (e.g. "01/ 26-27" -> "01-26-27")
@@ -19,6 +21,7 @@ const safeFileName = (name) => `${name.replace(/\s*[\\/:*?"<>|]+\s*/g, '-').repl
 export const invoicePdfFileName = (invoice) => safeFileName(`Tax Invoice ${invoice.invoiceNumber || 'Draft'}`);
 export const commercialPdfFileName = (invoice) => safeFileName(`Commercial Invoice ${invoice.invoiceNumber || 'Draft'}`);
 export const packingPdfFileName = (list) => safeFileName(`Packing List ${list.invoiceNumber || 'Draft'}`);
+export const evdPdfFileName = (invoice) => safeFileName(`Export Value Declaration ${invoice.invoiceNumber || 'Draft'}`);
 
 /**
  * Renders a document off-screen and builds an A4 PDF from it.
@@ -100,6 +103,8 @@ export const buildCommercialPdf = (invoice) =>
 
 export const buildPackingPdf = (list) => buildPdf(<PackingListDocument list={list} fillPage />, packingPdfFileName(list));
 
+export const buildEvdPdf = (invoice) => buildPdf(<ExportValueDeclarationDocument invoice={invoice} />, evdPdfFileName(invoice));
+
 export async function downloadInvoicePdf(invoice) {
   (await buildInvoicePdf(invoice)).save();
 }
@@ -108,4 +113,7 @@ export async function downloadCommercialPdf(invoice) {
 }
 export async function downloadPackingPdf(list) {
   (await buildPackingPdf(list)).save();
+}
+export async function downloadEvdPdf(invoice) {
+  (await buildEvdPdf(invoice)).save();
 }

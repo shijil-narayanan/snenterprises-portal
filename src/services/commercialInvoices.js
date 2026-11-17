@@ -1,8 +1,28 @@
 import { createCollectionService } from './collection';
 import { commercialTotal } from '../utils/commercial';
 import { lineAmount } from '../utils/invoice';
+import { emptyEvd, NATURE_OPTIONS, RULE_OPTIONS } from '../utils/evd';
 
 const str = (v) => (v ?? '').toString().trim();
+
+// Export Value Declaration choices, limited to the allowed values
+function toEvd(evd = {}) {
+  const base = emptyEvd();
+  const pick = (v, allowed, fallback) => (allowed.includes(v) ? v : fallback);
+  return {
+    shippingBillNo: str(evd.shippingBillNo),
+    shippingBillDate: evd.shippingBillDate || '',
+    nature: pick(evd.nature, NATURE_OPTIONS.map((o) => o.value), base.nature),
+    natureOther: str(evd.natureOther),
+    valuationRule: pick(String(evd.valuationRule ?? ''), RULE_OPTIONS, base.valuationRule),
+    related: pick(evd.related, ['yes', 'no'], base.related),
+    influenced: pick(evd.influenced, ['yes', 'no'], base.influenced),
+    termsOfPayment: str(evd.termsOfPayment),
+    termsOfDelivery: str(evd.termsOfDelivery),
+    previousExports: str(evd.previousExports),
+    otherInfo: (evd.otherInfo || '').trim(),
+  };
+}
 
 function toRecord(data) {
   const items = (data.items || []).map((it) => ({
@@ -42,6 +62,7 @@ function toRecord(data) {
     marks: { name: str(marks.name), numbers: str(marks.numbers), port: str(marks.port), origin: str(marks.origin) },
     deliveryTerms: str(data.deliveryTerms),
     lut: str(data.lut),
+    evd: toEvd(data.evd),
   };
 }
 

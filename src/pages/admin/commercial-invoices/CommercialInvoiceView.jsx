@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { deleteCommercialInvoice, getCommercialInvoice, addCommercialInvoiceEmailLog } from '../../../services/commercialInvoices';
 import { listPackingLists } from '../../../services/packingLists';
 import { formatDate, formatMoney } from '../../../utils/invoice';
-import { commercialPdfFileName, downloadCommercialPdf, buildCommercialPdf } from '../../../utils/invoicePdf';
+import { commercialPdfFileName, downloadCommercialPdf, buildCommercialPdf, downloadEvdPdf } from '../../../utils/invoicePdf';
 import CommercialInvoiceDocument from '../../../components/CommercialInvoiceDocument';
 import DownloadPdfButton from '../../../components/DownloadPdfButton';
 import { ArrowLeftIcon, BoxIcon, CopyIcon, EditIcon, PrintIcon, TrashIcon, MailIcon } from '../../../components/Icons';
@@ -97,6 +97,7 @@ export default function CommercialInvoiceView() {
           )}
           <button className="btn" onClick={handlePrint}><PrintIcon /> Print</button>
           <DownloadPdfButton className="btn btn-primary" getInvoice={() => invoice} download={downloadCommercialPdf} />
+          <DownloadPdfButton className="btn" getInvoice={() => invoice} download={downloadEvdPdf} label="Export Value Declaration" />
           <button className="btn btn-danger-outline" onClick={handleDelete}><TrashIcon /> Delete</button>
         </div>
       </div>

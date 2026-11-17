@@ -13,6 +13,8 @@ import SearchSelect from '../../../components/SearchSelect';
 import PdfPreviewModal from '../../../components/PdfPreviewModal';
 import { ArrowLeftIcon, FileIcon, PlusIcon, TrashIcon } from '../../../components/Icons';
 import useFormGuards from '../../../hooks/useFormGuards';
+import EvdSection from '../../../components/export/EvdSection';
+import { emptyEvd } from '../../../utils/evd';
 import {
   FieldError,
   InvoiceDetailsSection,
@@ -87,9 +89,10 @@ export default function CommercialInvoiceForm() {
           const src = copyFromId && all.find((i) => i.id === copyFromId);
           if (src) {
             const keep = ['consigneeId', 'consignee', 'buyerSameAsConsignee', 'buyerId', 'buyer', 'origin', 'destination',
-              'vesselFlight', 'originPort', 'portOfDischarge', 'destinationPort', 'currency', 'notes', 'deliveryTerms', 'lut'];
+              'vesselFlight', 'originPort', 'portOfDischarge', 'destinationPort', 'currency', 'notes', 'deliveryTerms', 'lut', 'evd'];
             keep.forEach((k) => { if (src[k] !== undefined) initial[k] = src[k]; });
             initial.items = (src.items || []).map(({ productId, description, hsnCode, qty, unit, rate }) => ({ productId, description, hsnCode, qty, unit, rate }));
+            initial.evd = { ...emptyEvd(), ...(src.evd || {}), shippingBillNo: '', shippingBillDate: '' };
             initial.marks = { ...initial.marks, name: src.marks?.name || '', port: src.marks?.port || '', origin: src.marks?.origin || 'MADE IN INDIA' };
           }
         }
@@ -278,6 +281,7 @@ export default function CommercialInvoiceForm() {
 
           <MarksSection step={5} form={form} setForm={setForm} />
           <TermsSection step={6} form={form} setForm={setForm} />
+          <EvdSection step={7} form={form} setForm={setForm} />
         </div>
 
         {/* Summary */}

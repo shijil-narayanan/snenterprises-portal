@@ -63,6 +63,16 @@ the consignee's saved export details), items (product, HSN, qty + unit, price, a
 HSN on the document), optional notes (printed under the items), packages and marks & numbers,
 terms of delivery & payment, and the LUT reference (default from Settings).
 
+## Export Value Declaration (Annexure-A)
+
+A saved commercial invoice has an **Export Value Declaration** button that downloads the declaration
+(Rule 7, Customs Valuation (Determination of Value of Export Goods) Rules, 2007) as a PDF. Invoice number and
+date, terms of payment and delivery (split from "Terms of delivery & payment", e.g. `C&F & 100% TT in Advance`)
+and place (city from Settings) are filled automatically. Shipping bill no./date, nature of transaction, valuation
+rule, related-party answers, previous exports and other information come from the invoice's optional
+**Export value declaration** section (defaults: sale on consignment basis, Rule 3, not related). It is signed
+"For SN ENTERPRISES / Proprietor" with the signature and stamp from Settings.
+
 ## Packing list fields
 
 Same header details as the commercial invoice (invoice no./date, PO, consignee/buyer, shipping,

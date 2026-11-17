@@ -15,7 +15,9 @@ const styles = {
   // Let long names wrap instead of being cut off
   singleValue: (base) => ({ ...base, whiteSpace: 'normal', lineHeight: 1.3, padding: '4px 0' }),
   valueContainer: (base) => ({ ...base, minWidth: 0 }),
-  placeholder: (base) => ({ ...base, color: '#6b7280' }),
+  // Long placeholders shorten with … instead of widening the page
+  placeholder: (base) => ({ ...base, color: '#6b7280', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }),
+  container: (base) => ({ ...base, minWidth: 0 }),
 };
 
 /**
